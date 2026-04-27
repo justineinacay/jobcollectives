@@ -28,11 +28,12 @@
   --font:'Outfit',system-ui,sans-serif;
   --sb:204px;
 }
-html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden}
+html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:auto}
 .hidden{display:none!important}
 
 /* ── APP SHELL ───────────────────────────────────────── */
 #app-shell{display:flex;height:100vh;overflow:hidden}
+
 .sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199}
 .sb-overlay.show{display:block}
 
@@ -345,7 +346,7 @@ select.form-control{cursor:pointer}
 .pin-dot.filled{background:var(--navy);border-color:var(--navy)}
 .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:200px;margin:0 auto 14px}
 .pin-key{padding:12px;border-radius:var(--r);border:1px solid var(--border2);background:var(--surface);font-size:16px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
-.pin-key:hover{background:var(--navy-pale);border-color:var(--navy-mid)}
+.pin-key:hover{background:var(--navy-pale);aborder-color:var(--navy-mid)}
 .pin-key:active{background:var(--navy);color:#fff;transform:scale(.95)}
 
 /* ── INFO BOXES ──────────────────────────────────────── */
@@ -472,50 +473,7 @@ select.form-control{cursor:pointer}
 <!-- ═══════════ TOAST ═══════════ -->
 <div class="toast" id="toast"></div>
 
-<script>
-   function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sb-overlay').classList.toggle('show');
-}
-
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sb-overlay').classList.remove('show');
-}
-
-function openModal(title, bodyHTML, footerHTML=''){
-  document.getElementById('modal-title').innerHTML = title;
-  document.getElementById('modal-body').innerHTML = bodyHTML;
-  document.getElementById('modal-foot').innerHTML = footerHTML;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function closeModal(){
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-function closeModalOutside(e){
-  if(e.target.id === 'modal-overlay') closeModal();
-}
-
-function toast(msg, type='info'){
-  const el = document.getElementById('toast');
-  el.innerText = msg;
-  el.className = 'toast show ' + type;
-
-  setTimeout(()=>{
-    el.classList.remove('show');
-  }, 3000);
-}
-   document.addEventListener('DOMContentLoaded', () => {
-  loadAllData();
-  APP.profile = APP.data.team.find(u => u.id === APP.user.uid);
-
-  renderCurrentPage();   // ✅ YES (needed)
-  updateSbBadges();      // ✅ YES (needed)
-});
-
-
+   <script>
 'use strict';
 /* ════════════════════════════════════════════════════════════
    TJC BUSINESS OS — v3.0
@@ -845,53 +803,6 @@ const KPI = {
     if(score >= 75) return 'var(--teal)';
     if(score >= 60) return 'var(--navy)';
     return 'var(--red)';
-  }
-};
-
-/* ──────────────────────────────────────────────────────────
-   SECTION 9 — SLA ENGINE
-────────────────────────────────────────────────────────── */
-const SLA = {
-  slaMs: CFG.slaHours * 3600 * 1000,
-  check(task){
-    if(!task.createdAt) return 'ok';
-    const created = new Date(task.createdAt).getTime();
-    const responded = task.firstResponseAt ? new Date(task.firstResponseAt).getTime() : Date.now();
-    const elapsed = responded - created;
-    if(elapsed > this.slaMs) return 'breach';
-    if(elapsed > this.slaMs * 0.75) return 'warn';
-    return 'ok';
-  },
-  elapsed(task){
-    if(!task.createdAt) return 0;
-    const created = new Date(task.createdAt).getTime();
-    const end = task.firstResponseAt ? new Date(task.firstResponseAt).getTime() : Date.now();
-    return (end - created) / 3600000; // hours
-  },
-  badge(task){
-    const status = this.check(task);
-    if(task.done||task.firstResponseAt){
-      const h = this.elapsed(task).toFixed(1);
-      return status==='breach'
-        ? `<span class="sla-badge sla-breach">⚠ ${h}h</span>`
-        : `<span class="sla-badge sla-ok">✓ ${h}h</span>`;
-    }
-    const h = ((Date.now()-new Date(task.createdAt).getTime())/3600000).toFixed(1);
-    return status==='breach'
-      ? `<span class="sla-badge sla-breach">BREACH ${h}h</span>`
-      : status==='warn'
-      ? `<span class="sla-badge sla-warn">${h}h</span>`
-      : `<span class="sla-badge sla-ok">${h}h</span>`;
-  },
-  complianceRate(tasks){
-    const tracked = tasks.filter(t=>t.createdAt);
-    if(!tracked.length) return 100;
-    const compliant = tracked.filter(t=>this.check(t)!=='breach');
-    return Math.round((compliant.length/tracked.length)*100);
-  },
-  vaRate(vaUid){
-    const vaTasks = APP.data.tasks.filter(t=>t.assigneeUid===vaUid&&!t.archived);
-    return this.complianceRate(vaTasks);
   }
 };
 
@@ -3622,3 +3533,12 @@ document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openQuickAdd();}
   if((e.metaKey||e.ctrlKey)&&e.key==='t'){e.preventDefault();openAddTask();}
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadAllData();
+  APP.profile = APP.data.team.find(u => u.id === APP.user.uid) || APP.data.team[0];
+  renderCurrentPage();
+  updateSbBadges();
+});
+
+</script>
