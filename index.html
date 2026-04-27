@@ -5,6 +5,1891 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TJC Business OS — The Jobs Collective</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── DESIGN TOKENS ─────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1B2A4A;--navy2:#243660;--navy-pale:#EEF1F7;--navy-mid:#D8DEF0;
+  --gold:#C9A84C;--gold-pale:#FBF5E8;--gold-dark:#8B6B1E;
+  --teal:#2A7F7F;--teal-pale:#E8F4F4;--teal-dark:#1a5c5c;
+  --red:#A32D2D;--red-pale:#FCEBEB;
+  --green:#1a7a45;--green-pale:#EAF3DE;
+  --amber:#633806;--amber-pale:#FAEEDA;
+  --bg:#F7F8FC;--surface:#FFFFFF;--border:#E2E6F0;--border2:#CDD3E8;
+  --text:#1a1f2e;--text2:#5a6072;--text3:#8892a4;
+  --shadow:0 1px 4px rgba(27,42,74,0.08),0 4px 14px rgba(27,42,74,0.06);
+  --shadow2:0 4px 16px rgba(27,42,74,0.12),0 12px 32px rgba(27,42,74,0.1);
+  --sb:210px;--font:'Outfit',system-ui,sans-serif;
+  --r:8px;--r2:12px;--r3:16px
+}
+html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.5}
+
+/* ── UTILITY ───────────────────────────────────────────── */
+.hidden{display:none!important}
+.flex{display:flex}.flex-1{flex:1}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-12{gap:12px}
+.w-full{width:100%}.text-center{text-align:center}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;white-space:nowrap}
+.t-navy{background:var(--navy-pale);color:var(--navy)}
+.t-gold{background:var(--gold-pale);color:var(--gold-dark)}
+.t-teal{background:var(--teal-pale);color:var(--teal-dark)}
+.t-green{background:var(--green-pale);color:var(--green)}
+.t-red{background:var(--red-pale);color:var(--red)}
+.t-amber{background:var(--amber-pale);color:var(--amber)}
+.t-gray{background:var(--navy-pale);color:var(--text3)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2)}
+.card-pad{padding:14px 16px}
+.av{border-radius:50%;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.av-xs{width:18px;height:18px;font-size:8px}
+.av-sm{width:24px;height:24px;font-size:10px}
+.av-md{width:32px;height:32px;font-size:12px}
+.av-lg{width:44px;height:44px;font-size:16px}
+.av-navy{background:var(--navy-pale);color:var(--navy)}
+.av-teal{background:var(--teal-pale);color:var(--teal-dark)}
+.av-gold{background:var(--gold-pale);color:var(--gold-dark)}
+.av-red{background:var(--red-pale);color:var(--red)}
+.av-green{background:var(--green-pale);color:var(--green)}
+.prog{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s}
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+/* ── BUTTONS ───────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--r);border:1px solid transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn-primary:hover{background:var(--navy2)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surface);color:var(--text2);border-color:var(--border2)}
+.btn-secondary:hover{background:var(--navy-pale);color:var(--navy)}
+.btn-danger{background:var(--red-pale);color:var(--red);border-color:#f0b0b0}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-icon{width:28px;height:28px;padding:0;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-size:14px;font-family:var(--font)}
+.btn-icon:hover{background:var(--red-pale);color:var(--red);border-color:var(--red)}
+
+/* ── FORM ──────────────────────────────────────────────── */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.form-control{width:100%;padding:9px 12px;border-radius:var(--r);border:1px solid var(--border2);font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface);outline:none;transition:border .15s}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,127,127,.1)}
+textarea.form-control{resize:vertical}
+select.form-control{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-error{font-size:11px;color:var(--red);margin-top:4px}
+
+/* ── AUTH SCREEN ───────────────────────────────────────── */
+#auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy) 0%,#243660 55%,#1a4a4a 100%);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9000}
+.auth-card{background:var(--surface);border-radius:var(--r3);padding:40px 36px;width:100%;max-width:420px;box-shadow:var(--shadow2)}
+.auth-logo{width:52px;height:52px;border-radius:14px;background:var(--navy);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.auth-logo svg{width:26px;height:26px}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text3);text-align:center;margin-bottom:28px}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:18px 0;font-size:11px;color:var(--text3)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-error{background:var(--red-pale);border:1px solid #f0b0b0;border-radius:var(--r);padding:9px 12px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+
+/* ── LOADER ────────────────────────────────────────────── */
+#app-loader{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:8000}
+.loader-logo{width:60px;height:60px;border-radius:16px;background:rgba(255,255,255,.1);border:1px solid rgba(201,168,76,.4);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.loader-logo svg{width:30px;height:30px}
+.loader-text{color:#fff;font-size:15px;font-weight:600;margin-bottom:4px}
+.loader-sub{color:rgba(255,255,255,.45);font-size:12px}
+.spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:18px auto 0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SHELL ─────────────────────────────────────────────── */
+#app-shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sb);flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;transition:transform .3s}
+.main-area{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.topbar{flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);height:56px;padding:0 20px;display:flex;align-items:center;gap:12px}
+.content-area{flex:1;overflow-y:auto;padding:20px}
+.bottom-nav{display:none}
+
+/* ── SIDEBAR ───────────────────────────────────────────── */
+.sb-brand{padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo-row{display:flex;align-items:center;gap:9px}
+.sb-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(201,168,76,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-icon svg{width:16px;height:16px}
+.sb-name{font-size:13px;font-weight:600;color:#fff;line-height:1.2}
+.sb-role{font-size:10px;color:rgba(255,255,255,.45)}
+.sb-nav{flex:1;padding:8px 0}
+.sb-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em;padding:10px 14px 3px}
+.sb-link{display:flex;align-items:center;gap:8px;padding:7px 14px;color:rgba(255,255,255,.6);font-size:12.5px;cursor:pointer;transition:all .15s;position:relative;white-space:nowrap}
+.sb-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.sb-link.active{color:#fff;background:rgba(201,168,76,.18);font-weight:600}
+.sb-link.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:0 2px 2px 0}
+.sb-link svg{width:14px;height:14px;opacity:.7;flex-shrink:0}
+.sb-link.active svg{opacity:1}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 6px;min-width:18px;text-align:center}
+.sb-footer{padding:12px 14px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:rgba(255,255,255,.06);cursor:pointer}
+.sb-user:hover{background:rgba(255,255,255,.1)}
+.sb-user-info{flex:1;min-width:0}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.45);text-transform:capitalize}
+.sb-verse{margin-bottom:10px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);border-radius:var(--r);padding:8px 10px}
+.sb-verse-ref{font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.sb-verse-text{font-size:10px;color:rgba(255,255,255,.6);font-style:italic;line-height:1.5}
+
+/* ── TOPBAR ────────────────────────────────────────────── */
+.topbar-left{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.hamburger{display:none;flex-direction:column;gap:4.5px;cursor:pointer;padding:4px}
+.hamburger span{width:18px;height:2px;background:var(--text2);border-radius:2px;display:block}
+.page-title{font-size:16px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+
+/* ── KPI ROW ───────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;cursor:default;transition:all .2s;border-left-width:3px}
+.kpi-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.kpi-label{font-size:10px;font-weight:600;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.04em}
+.kpi-val{font-size:24px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.kpi-sub{font-size:11px;color:var(--text3)}
+.kpi-up{color:var(--green)}.kpi-dn{color:var(--red)}
+
+/* ── SECTION ───────────────────────────────────────────── */
+.sec{margin-bottom:20px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
+.sec-title svg{width:14px;height:14px;color:var(--text3)}
+.sec-action{font-size:12px;color:var(--teal);cursor:pointer;font-weight:600}
+.sec-action:hover{text-decoration:underline}
+
+/* ── TABLE ─────────────────────────────────────────────── */
+.data-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.data-table th{text-align:left;padding:7px 12px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);background:var(--bg)}
+.data-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tbody tr{cursor:pointer;transition:background .12s}
+.data-table tbody tr:hover td{background:#FAFBFE}
+.data-table td.overdue-cell{color:var(--red);font-weight:600}
+
+/* ── TASKS ─────────────────────────────────────────────── */
+.task-row{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
+.task-row:last-child{border-bottom:none}
+.task-row:hover{background:#FAFBFE}
+.task-row.overdue-row{background:rgba(163,45,45,.04)}
+.chk{width:15px;height:15px;border-radius:4px;border:2px solid var(--border2);flex-shrink:0;cursor:pointer;position:relative;transition:all .15s}
+.chk:hover{border-color:var(--teal)}
+.chk.done{background:var(--teal);border-color:var(--teal)}
+.chk.done::after{content:'';position:absolute;left:3px;top:.5px;width:5px;height:8px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg)}
+.task-name{font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.task-name.done{text-decoration:line-through;color:var(--text3)}
+.task-meta{display:flex;align-items:center;gap:6px;flex-shrink:0}
+
+/* ── FILTER TABS ───────────────────────────────────────── */
+.ftabs{display:flex;gap:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:3px;width:fit-content;margin-bottom:12px}
+.ftab{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .15s}
+.ftab.on{background:var(--surface);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:700}
+
+/* ── PIPELINE ──────────────────────────────────────────── */
+.pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px}
+.pipe-col{min-width:180px;flex:1}
+.pipe-col-head{font-size:11px;font-weight:700;color:var(--text2);padding:0 4px 8px;display:flex;align-items:center;justify-content:space-between}
+.pipe-count{width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.pipe-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-bottom:6px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.pipe-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);border-color:var(--border2)}
+.pipe-card-bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pipe-card-name{font-size:12px;font-weight:600;margin-bottom:2px;padding-left:8px}
+.pipe-card-meta{font-size:10px;color:var(--text3);padding-left:8px;margin-bottom:4px}
+.pipe-card-rate{font-size:11px;font-weight:600;padding-left:8px;margin-bottom:5px}
+.pipe-add{border:1.5px dashed var(--border2);border-radius:var(--r);padding:8px;text-align:center;font-size:11px;color:var(--text3);cursor:pointer;transition:all .15s}
+.pipe-add:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-pale)}
+
+/* ── VA CAPACITY ───────────────────────────────────────── */
+.va-cap-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border)}
+.va-cap-row:last-child{border-bottom:none}
+.va-cap-info{flex:1;min-width:0}
+.va-cap-name{font-size:13px;font-weight:600}
+.va-cap-role{font-size:10px;color:var(--text3)}
+.va-cap-pct{font-size:12px;font-weight:700;min-width:34px;text-align:right}
+
+/* ── MODAL ─────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(27,42,74,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{background:var(--surface);border-radius:var(--r2);width:100%;max-width:480px;box-shadow:var(--shadow2);transform:translateY(10px);transition:transform .22s;max-height:92vh;overflow-y:auto}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-head{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.modal-title{font-size:15px;font-weight:700}
+.modal-body{padding:18px 20px}
+.modal-foot{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--surface)}
+
+/* ── TOAST ─────────────────────────────────────────────── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:11px 18px;border-radius:var(--r);font-size:13px;font-weight:500;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;max-width:320px;box-shadow:var(--shadow2)}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:3px solid #4ade80}
+.toast.warning{border-left:3px solid var(--gold)}
+.toast.error{border-left:3px solid #f87171}
+
+/* ── ROLE PORTALS ──────────────────────────────────────── */
+/* VA Portal */
+.portal-header{background:var(--navy);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.portal-tabs-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;display:flex;overflow-x:auto}
+.ptab{padding:10px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
+.ptab.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:700}
+/* Client Portal */
+.cp-hero{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r2);padding:24px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.cp-hero::before{content:'';position:absolute;right:-20px;top:-20px;width:140px;height:140px;border-radius:50%;background:rgba(201,168,76,.1)}
+.cp-tabs-bar{display:flex;overflow-x:auto;border-bottom:1px solid var(--border);margin-bottom:16px}
+.cptab{padding:8px 14px;font-size:12.5px;font-weight:500;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s}
+.cptab.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:700}
+/* Timer */
+.timer-display{font-size:36px;font-weight:700;color:var(--navy);text-align:center;letter-spacing:.05em;font-variant-numeric:tabular-nums;margin:12px 0}
+.timer-btn{padding:9px 20px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);border:none;transition:all .15s}
+.timer-start{background:var(--teal);color:#fff}
+.timer-stop{background:var(--red);color:#fff}
+.timer-reset{background:var(--bg);color:var(--text2);border:1px solid var(--border2)}
+/* SOP accordion */
+.sop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.sop-head{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.sop-head:hover{background:var(--bg)}
+.sop-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.sop-body.open{max-height:400px;padding:12px 16px}
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.info-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.info-label-sm{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.info-val{font-size:13px;font-weight:600}
+/* Deliverables */
+.deliv-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);transition:background .12s}
+.deliv-row:hover{background:var(--bg)}
+.deliv-row:last-child{border-bottom:none}
+.deliv-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+/* Notes */
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px}
+.note-meta{font-size:10px;color:var(--text3);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+/* Report */
+.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;margin-bottom:10px}
+.rmet{text-align:center;padding:8px;background:var(--bg);border-radius:var(--r)}
+.rmet-val{font-size:18px;font-weight:700;color:var(--navy)}
+.rmet-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+/* Stat boxes */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center}
+.stat-val{font-size:22px;font-weight:700;line-height:1.1}
+.stat-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+
+/* ── EMPTY STATE ───────────────────────────────────────── */
+.empty{padding:36px 20px;text-align:center}
+.empty svg{width:36px;height:36px;margin:0 auto 10px;display:block;opacity:.25}
+.empty-text{font-size:13px;color:var(--text3)}
+
+/* ── REAL-TIME INDICATOR ───────────────────────────────── */
+.rt-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── SECURITY BADGE ────────────────────────────────────── */
+.secure-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;background:var(--green-pale);color:var(--green);font-size:10px;font-weight:700}
+
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media(max-width:640px){
+  .sidebar{position:fixed;inset-y:0;left:0;z-index:300;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:299;display:none}
+  .sb-overlay.show{display:block}
+  .hamburger{display:flex}
+  .bottom-nav{display:block;flex-shrink:0;background:var(--surface);border-top:1px solid var(--border)}
+  .bn-inner{display:flex;justify-content:space-around;padding:5px 0 max(5px,env(safe-area-inset-bottom))}
+  .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;cursor:pointer;color:var(--text3);font-size:9px;min-width:46px;border-radius:8px}
+  .bn-item.on{color:var(--navy)}
+  .bn-item.on .bn-icon{background:var(--navy-pale)}
+  .bn-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .bn-icon svg{width:16px;height:16px}
+  .bn-badge{position:absolute;top:2px;right:4px;width:8px;height:8px;background:var(--red);border-radius:50%;border:1.5px solid var(--surface)}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .form-row{grid-template-columns:1fr}
+  .pipeline{flex-direction:column}
+  .pipe-col{min-width:unset}
+  .content-area{padding:14px}
+  .topbar-right .btn:not(.btn-primary){display:none}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .22s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- ── OVERLAYS ─────────────────────────────────────────── -->
+<div id="sb-overlay" class="sb-overlay" onclick="closeSidebar()"></div>
+
+<!-- ── APP SHELL ─────────────────────────────────────────── -->
+<div id="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo-row">
+        <div class="sb-icon">
+          <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.2" fill="#C9A84C"/><rect x="10" y="2" width="6" height="6" rx="1.2" fill="rgba(255,255,255,.5)"/><rect x="2" y="10" width="6" height="6" rx="1.2" fill="rgba(255,255,255,.5)"/><rect x="10" y="10" width="6" height="6" rx="1.2" fill="#2A7F7F"/></svg>
+        </div>
+        <div>
+          <div class="sb-name">The Jobs Collective</div>
+          <div class="sb-role" id="sb-role-label">Loading…</div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-nav" id="sb-nav-links"><!-- role-specific nav rendered here --></div>
+    <div class="sb-footer">
+      <div class="sb-verse">
+        <div class="sb-verse-ref">✦ This week's scripture</div>
+        <div class="sb-verse-text">"Whatever you do, work at it with all your heart, as working for the Lord." — Col. 3:23</div>
+      </div>
+      <div class="sb-user" onclick="confirmSignOut()">
+        <div class="av av-sm av-navy" id="sb-user-av">?</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name" id="sb-user-name">…</div>
+          <div class="sb-user-role" id="sb-user-role">…</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;color:rgba(255,255,255,.35)"><path d="M9 3l3 4-3 4M2 7h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <div class="main-area">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <span style="display:inline-flex;align-items:center;font-size:10px;color:var(--text3)"><span class="rt-dot"></span>Live</span>
+      </div>
+      <div class="topbar-right" id="topbar-actions"><!-- role actions injected --></div>
+    </div>
+    <div class="content-area" id="content-area"><!-- page content --></div>
+    <div class="bottom-nav" id="bottom-nav"><!-- mobile nav --></div>
+  </div>
+</div>
+
+<!-- ── MODAL ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TJC BUSINESS OS — Demo Mode (no login, localStorage)
+════════════════════════════════════════════════════════ -->
+<script>
+/* ──────────────────────────────────────────────────────────
+   SEED DATA — pre-populated TJC sample data
+────────────────────────────────────────────────────────── */
+const SEED = {
+  tasks:[
+    {id:'t1',title:'Schedule BrandX Week 17 — IG + FB posts',done:false,priority:'Urgent',dueDate:'2025-04-23',project:'BrandX Philippines',assigneeUid:'u2',assigneeName:'Maria Reyes',assigneeInitials:'MR',assigneeColor:'teal'},
+    {id:'t2',title:'Send weekly performance report to BrandX client',done:false,priority:'High',dueDate:'2025-04-23',project:'BrandX Philippines',assigneeUid:'u5',assigneeName:'Grace Santos',assigneeInitials:'GS',assigneeColor:'green'},
+    {id:'t3',title:'Draft Sunrise Wellness onboarding welcome email',done:false,priority:'High',dueDate:'2025-04-23',project:'Sunrise Wellness PH',assigneeUid:'u3',assigneeName:'Ana Cruz',assigneeInitials:'AC',assigneeColor:'red'},
+    {id:'t4',title:'Log April time entries — TechStart Manila',done:true,priority:'Medium',dueDate:'2025-04-22',project:'TechStart Manila',assigneeUid:'u3',assigneeName:'Ana Cruz',assigneeInitials:'AC',assigneeColor:'red'},
+    {id:'t5',title:'Create BrandX May content calendar',done:false,priority:'Medium',dueDate:'2025-04-25',project:'BrandX Philippines',assigneeUid:'u4',assigneeName:'Paolo Lim',assigneeInitials:'PL',assigneeColor:'gold'},
+    {id:'t6',title:'Follow up with Pacific Foods PH lead',done:false,priority:'Medium',dueDate:'2025-04-24',project:'CRM',assigneeUid:'u5',assigneeName:'Grace Santos',assigneeInitials:'GS',assigneeColor:'green'},
+    {id:'t7',title:'Submit Bloom Beauty final invoice',done:false,priority:'Urgent',dueDate:'2025-04-18',project:'Finance',assigneeUid:'u1',assigneeName:'Justine Bautista',assigneeInitials:'JB',assigneeColor:'navy'},
+    {id:'t8',title:'Update TechStart project tracker',done:true,priority:'Low',dueDate:'2025-04-22',project:'TechStart Manila',assigneeUid:'u3',assigneeName:'Ana Cruz',assigneeInitials:'AC',assigneeColor:'red'},
+    {id:'t9',title:'Design Sunrise welcome kit graphics',done:false,priority:'High',dueDate:'2025-04-26',project:'Sunrise Wellness PH',assigneeUid:'u4',assigneeName:'Paolo Lim',assigneeInitials:'PL',assigneeColor:'gold'},
+  ],
+  clients:[
+    {id:'c1',name:'BrandX Philippines',status:'Active',package:'Premium',rate:25000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-22',contractEnd:'2025-09-30',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c2',name:'TechStart Manila',status:'Active',package:'Starter',rate:15000,priority:'Medium',assignedVaUid:'u3',assignedVa:'Ana Cruz',assignedVaInitials:'AC',assignedVaColor:'red',lastContact:'2025-04-20',contractEnd:'2025-06-30',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c3',name:'Sunrise Wellness PH',status:'Onboarding',package:'Growth',rate:18000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-21',contractEnd:'2025-10-31',onboardingStep:4,timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c4',name:'Bloom Beauty Co.',status:'Completed',package:'Custom',rate:12000,priority:'Low',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-10',contractEnd:'2025-04-10',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c5',name:'FreshMart PH',status:'Proposal',package:'Premium',rate:28000,priority:'High',assignedVaUid:'u1',assignedVa:'Justine Bautista',assignedVaInitials:'JB',assignedVaColor:'navy',lastContact:'2025-04-20',contractEnd:'',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c6',name:'Pacific Foods PH',status:'Lead',package:'Growth',rate:0,priority:'High',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-18',contractEnd:'',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+    {id:'c7',name:'Coastal Realty',status:'Lead',package:'Starter',rate:0,priority:'Medium',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-15',contractEnd:'',timezone:'PHT (UTC+8)',notes:[],deliverables:[],tools:[],socials:{}},
+  ],
+  timelogs:[
+    {id:'l1',vaUid:'u2',vaName:'Maria Reyes',vaInitials:'MR',date:'2025-04-23',description:'Scheduled BrandX Week 17 IG + FB posts',project:'BrandX Philippines',minutes:150},
+    {id:'l2',vaUid:'u3',vaName:'Ana Cruz',vaInitials:'AC',date:'2025-04-23',description:'TechStart inbox management',project:'TechStart Manila',minutes:60},
+    {id:'l3',vaUid:'u4',vaName:'Paolo Lim',vaInitials:'PL',date:'2025-04-23',description:'Wrote BrandX May content calendar draft',project:'BrandX Philippines',minutes:180},
+    {id:'l4',vaUid:'u2',vaName:'Maria Reyes',vaInitials:'MR',date:'2025-04-22',description:'Sunrise welcome email sequence',project:'Sunrise Wellness PH',minutes:90},
+  ],
+  content:[
+    {id:'x1',title:'BrandX — April Week 4 Carousel (6 slides)',status:'pending',vaUid:'u2',vaName:'Maria Reyes',vaInitials:'MR',vaColor:'teal',platform:'Facebook + Instagram',dueLabel:'Due today',urgency:'red'},
+    {id:'x2',title:'Sunrise Wellness — Welcome Launch Post',status:'pending',vaUid:'u4',vaName:'Paolo Lim',vaInitials:'PL',vaColor:'gold',platform:'Instagram + Facebook',dueLabel:'Apr 25',urgency:'amber'},
+    {id:'x3',title:'TechStart — LinkedIn Company Banner',status:'pending',vaUid:'u3',vaName:'Ana Cruz',vaInitials:'AC',vaColor:'red',platform:'LinkedIn',dueLabel:'Apr 26',urgency:'gray'},
+    {id:'x4',title:'BrandX — Product Feature Reel',status:'approved',vaUid:'u2',vaName:'Maria Reyes',vaInitials:'MR',vaColor:'teal',platform:'Instagram',dueLabel:'Apr 19',urgency:'gray'},
+  ],
+  invoices:[
+    {id:'i1',number:'INV-2025-001',client:'Bloom Beauty Co.',amount:12000,status:'Paid',issuedDate:'2025-04-01',dueDate:'2025-04-10',paidAt:'2025-04-10'},
+    {id:'i2',number:'INV-2025-002',client:'TechStart Manila',amount:15000,status:'Overdue',issuedDate:'2025-04-01',dueDate:'2025-04-15',paidAt:null},
+    {id:'i3',number:'INV-2025-003',client:'BrandX Philippines',amount:25000,status:'Sent',issuedDate:'2025-04-10',dueDate:'2025-04-30',paidAt:null},
+    {id:'i4',number:'INV-2025-004',client:'Sunrise Wellness PH',amount:18000,status:'Draft',issuedDate:'2025-04-20',dueDate:'2025-05-05',paidAt:null},
+  ],
+  goals:[
+    {id:'g1',name:'Reach ₱250,000 MRR',category:'Revenue',quarter:'Q2',year:2025,target:250000,current:58000,status:'On Track'},
+    {id:'g2',name:'Onboard 10 active clients',category:'Clients',quarter:'Q2',year:2025,target:10,current:4,status:'On Track'},
+    {id:'g3',name:'Hire 2 additional VAs',category:'Team',quarter:'Q2',year:2025,target:2,current:1,status:'In Progress'},
+    {id:'g4',name:'Grow Instagram to 1,000 followers',category:'Marketing',quarter:'Q2',year:2025,target:1000,current:430,status:'At Risk'},
+    {id:'g5',name:'95% client satisfaction rate',category:'Operations',quarter:'Q2',year:2025,target:95,current:87,status:'On Track'},
+  ],
+  team:[
+    {id:'u1',displayName:'Justine Bautista',email:'justine@thejobscollective.com',role:'owner',initials:'JB',avatarColor:'navy',capacity:90,status:'Active',skills:['Strategy','Sales','Operations']},
+    {id:'u2',displayName:'Maria Reyes',email:'maria@thejobscollective.com',role:'va',initials:'MR',avatarColor:'teal',capacity:85,status:'Active',skills:['Facebook Ads','Canva','Scheduling']},
+    {id:'u3',displayName:'Ana Cruz',email:'ana@thejobscollective.com',role:'va',initials:'AC',avatarColor:'red',capacity:60,status:'Active',skills:['Data Entry','Email Mgmt','Scheduling']},
+    {id:'u4',displayName:'Paolo Lim',email:'paolo@thejobscollective.com',role:'va',initials:'PL',avatarColor:'gold',capacity:70,status:'Active',skills:['Copywriting','Canva','Research']},
+    {id:'u5',displayName:'Grace Santos',email:'grace@thejobscollective.com',role:'va',initials:'GS',avatarColor:'green',capacity:45,status:'Active',skills:['Client Relations','Reporting','Sales']},
+  ],
+  events:[
+    {id:'e1',name:'Weekly team standup',date:'Today',time:'9:00 AM',who:'All VAs',color:'teal'},
+    {id:'e2',name:'Sunrise Wellness kickoff call',date:'Apr 24',time:'2:00 PM',who:'Justine + Maria',color:'gold'},
+    {id:'e3',name:'BrandX monthly review',date:'Apr 28',time:'11:00 AM',who:'Grace + Client',color:'navy'},
+    {id:'e4',name:'1:1 — Maria R.',date:'Apr 29',time:'3:00 PM',who:'Justine',color:'purple'},
+    {id:'e5',name:'May planning meeting',date:'Apr 30',time:'10:00 AM',who:'All VAs',color:'teal'},
+  ]
+};
+
+/* ──────────────────────────────────────────────────────────
+   GLOBAL STATE  (localStorage-backed)
+────────────────────────────────────────────────────────── */
+const APP = {
+  user:    {uid:'u1'},
+  profile: null,
+  role:    'owner',
+  page:    'home',
+  listeners: [],
+  data:    {tasks:[],clients:[],timelogs:[],content:[],invoices:[],goals:[],team:[],events:[]},
+  va:      {tab:'dashboard',taskFilter:'open'},
+  cp:      {clientId:null,tab:'overview'},
+  timer:   {running:false,start:null,elapsed:0,iv:null}
+};
+
+const PAGE_TITLES = {
+  home:'Agency Command Center', clients:'Client Pipeline',
+  tasks:'Task Manager', content:'Content Approvals',
+  finance:'Finance & Invoices', team:'VA Roster',
+  goals:'OKR Goals', onboarding:'Onboarding Tracker',
+  vaportal:'VA Portal', clientportal:'Client Portal'
+};
+
+/* ──────────────────────────────────────────────────────────
+   localStorage DATA LAYER  (drop-in Firebase replacement)
+────────────────────────────────────────────────────────── */
+function lsKey(col){ return 'tjc_'+col; }
+
+function lsLoad(col){
+  try{
+    const raw=localStorage.getItem(lsKey(col));
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  // First visit — seed with sample data
+  const seed = SEED[col]||[];
+  localStorage.setItem(lsKey(col),JSON.stringify(seed));
+  return seed;
+}
+function lsSave(col,arr){ localStorage.setItem(lsKey(col),JSON.stringify(arr)); }
+function lsNextId(col){ const arr=lsLoad(col); return arr.length?Math.max(...arr.map(x=>parseInt((x.id||'0').replace(/\D/g,''))||0))+1:1; }
+
+function today(){ return new Date().toISOString().split('T')[0]; }
+function ts(){ return new Date().toISOString(); }
+function uid(){ return APP.user.uid; }
+
+// Async wrappers that match the original Firebase API signatures
+async function addDoc(col, data){
+  const arr=lsLoad(col);
+  const prefix={tasks:'t',clients:'c',timelogs:'l',content:'x',invoices:'i',goals:'g',events:'e'}[col]||'d';
+  const id=prefix+Date.now();
+  arr.unshift({id,...data,createdAt:ts(),createdBy:uid()});
+  lsSave(col,arr);
+  refreshCollection(col);
+  return id;
+}
+async function setDoc(col, id, data){
+  const realCol = col==='users' ? 'team' : col;
+  const arr=lsLoad(realCol);
+  const idx=arr.findIndex(x=>x.id===id);
+  if(idx>=0) arr[idx]={...arr[idx],...data,updatedAt:ts()};
+  else arr.unshift({id,...data,updatedAt:ts()});
+  lsSave(realCol,arr);
+  refreshCollection(realCol);
+}
+async function updateDoc(col, id, data){
+  const arr=lsLoad(col);
+  const idx=arr.findIndex(x=>x.id===id);
+  if(idx>=0){ arr[idx]={...arr[idx],...data,updatedAt:ts()}; lsSave(col,arr); refreshCollection(col); }
+}
+async function deleteDoc(col, id){
+  const arr=lsLoad(col).filter(x=>x.id!==id);
+  lsSave(col,arr);
+  refreshCollection(col);
+}
+
+function refreshCollection(col){
+  APP.data[col]=lsLoad(col);
+  updateSbBadges();
+  const ca=document.getElementById('content-area');
+  if(ca) renderCurrentPage();
+}
+
+function loadAllData(){
+  ['tasks','clients','timelogs','content','invoices','goals','team','events'].forEach(col=>{
+    APP.data[col]=lsLoad(col);
+  });
+}
+
+/* ──────────────────────────────────────────────────────────
+   BOOT — straight to dashboard, no auth needed
+────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  loadAllData();
+  APP.profile = APP.data.team.find(v=>v.id==='u1')||{id:'u1',displayName:'Justine Bautista',role:'owner',initials:'JB',avatarColor:'navy'};
+  APP.role='owner';
+  buildNav();
+  buildTopbarActions();
+  buildBottomNav();
+  updateUserInfo();
+  navigate('home');
+});
+
+/* stub out Firebase auth functions so nothing breaks */
+function signIn(){} function signOutUser(){ location.reload(); }
+function showForgotPassword(){}
+function confirmSignOut(){ if(confirm('Reset demo data?')){ ['tasks','clients','timelogs','content','invoices','goals','team','events'].forEach(col=>localStorage.removeItem(lsKey(col))); location.reload(); } }
+function showLoader(){} function showAuth(){} function showApp(){}
+function show(id){ const el=document.getElementById(id); if(el) el.classList.remove('hidden'); }
+function hide(id){ const el=document.getElementById(id); if(el) el.classList.add('hidden'); }
+function clearListeners(){}
+
+/* ──────────────────────────────────────────────────────────
+   NAV BUILDER (role-aware)
+────────────────────────────────────────────────────────── */
+const NAV_OWNER = [
+  {label:'Dashboard',  page:'home',         icon:'<rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".9"/><rect x="7" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="7" width="5" height="5" rx="1" fill="currentColor" opacity=".4"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/>'},
+  {section:'Clients'},
+  {label:'Pipeline',   page:'clients',      icon:'<path d="M1 6h12M1 6L4 3M1 6l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'},
+  {label:'Onboarding', page:'onboarding',   icon:'<circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2 2-3.2 5-3.2s5 1.2 5 3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'},
+  {section:'Operations'},
+  {label:'Tasks',      page:'tasks',        icon:'<path d="M1.5 3h9M1.5 6h7M1.5 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'},
+  {label:'Content',    page:'content',      icon:'<rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5.5h12M5 2v3M9 2v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>', badge:'content'},
+  {section:'Finance'},
+  {label:'Invoices',   page:'finance',      icon:'<rect x="1" y="3" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 6.5h12M5 3v-1M9 3v-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'},
+  {section:'Team'},
+  {label:'VA Roster',  page:'team',         icon:'<circle cx="5.5" cy="5" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M1 12c0-2 2-3.2 4.5-3.2S10 10 10 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="5.5" r="1.7" stroke="currentColor" stroke-width="1.2"/>'},
+  {section:'Company'},
+  {label:'OKR Goals',  page:'goals',        icon:'<circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r=".8" fill="currentColor"/>'},
+  {section:'Portals'},
+  {label:'VA Portal',  page:'vaportal',     icon:'<rect x="1.5" y="1.5" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'},
+  {label:'Client Portal',page:'clientportal',icon:'<circle cx="7" cy="5" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2 2.2-3.5 5-3.5s5 1.5 5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'},
+];
+
+const NAV_VA = [
+  {label:'My Dashboard',page:'vaportal',    icon:'<rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".9"/><rect x="7" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".4"/><rect x="1" y="7" width="5" height="5" rx="1" fill="currentColor" opacity=".4"/><rect x="7" y="7" width="5" height="5" rx="1" fill="currentColor" opacity=".7"/>'},
+];
+
+const NAV_CLIENT = [
+  {label:'My Portal',   page:'clientportal',icon:'<circle cx="7" cy="5" r="2.2" stroke="currentColor" stroke-width="1.3"/><path d="M2 12c0-2 2.2-3.5 5-3.5s5 1.5 5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>'},
+];
+
+function buildNav(){
+  const nav = APP.role==='owner' ? NAV_OWNER : APP.role==='va' ? NAV_VA : NAV_CLIENT;
+  const container = document.getElementById('sb-nav-links');
+  container.innerHTML = nav.map(item=>{
+    if(item.section) return `<div class="sb-label">${item.section}</div>`;
+    return `<div class="sb-link${APP.page===item.page?' active':''}" id="nav-${item.page}" onclick="navigate('${item.page}')">
+      <svg viewBox="0 0 14 14" fill="none" width="14" height="14">${item.icon}</svg>
+      ${item.label}
+      ${item.badge?`<span class="sb-badge" id="badge-${item.badge}">0</span>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('sb-role-label').textContent = ({owner:'Owner Dashboard',va:'VA Portal',client:'Client Portal'})[APP.role]||APP.role;
+}
+
+function buildBottomNav(){
+  const role = APP.role;
+  const bnEl = document.getElementById('bottom-nav');
+  if(role==='owner'){
+    bnEl.innerHTML=`<div class="bn-inner">
+      ${[
+        {p:'home',lbl:'Home',icon:'<rect x="2" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/><rect x="10" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".4"/><rect x="2" y="10" width="6" height="6" rx="1.5" fill="currentColor" opacity=".4"/><rect x="10" y="10" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/>'},
+        {p:'clients',lbl:'Clients',icon:'<path d="M1 9h16M1 9L5.5 4M1 9l4.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'},
+        {p:'tasks',lbl:'Tasks',icon:'<path d="M2 4h14M2 9h10M2 14h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>'},
+        {p:'content',lbl:'Approvals',icon:'<rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 7h14M6 2v4M12 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',badge:true},
+        {p:'finance',lbl:'Finance',icon:'<rect x="2" y="4" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14M6.5 4V2M11.5 4V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/>'},
+      ].map(i=>`<div class="bn-item${APP.page===i.p?' on':''}" id="bn-${i.p}" onclick="navigate('${i.p}')" style="position:relative">
+        <div class="bn-icon"><svg viewBox="0 0 18 18" fill="none" width="16" height="16">${i.icon}</svg></div>
+        ${i.lbl}
+        ${i.badge?`<span class="bn-badge" id="bn-badge-content" style="display:none"></span>`:''}
+      </div>`).join('')}
+    </div>`;
+  }
+}
+
+function buildTopbarActions(){
+  const el=document.getElementById('topbar-actions');
+  if(APP.role==='owner'){
+    el.innerHTML=`
+      <button class="btn btn-secondary btn-sm" onclick="openQuickAdd()">+ Add</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('clients')">View Pipeline</button>`;
+  }
+}
+
+function updateUserInfo(){
+  const p=APP.profile;
+  if(!p) return;
+  const name=p.displayName||p.email;
+  const initials=(name.split(' ').map(n=>n[0]).join('').slice(0,2)||'?').toUpperCase();
+  document.getElementById('sb-user-av').textContent=initials;
+  document.getElementById('sb-user-name').textContent=name;
+  document.getElementById('sb-user-role').textContent=({owner:'Owner',va:'Virtual Assistant',client:'Client'})[p.role]||p.role;
+}
+
+function updateSbBadges(){
+  const pending=APP.data.content.filter(c=>c.status==='pending').length;
+  ['badge-content','bn-badge-content'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.textContent=pending;
+    el.style.display=pending>0?'':'none';
+  });
+}
+
+/* ──────────────────────────────────────────────────────────
+   ROUTER
+────────────────────────────────────────────────────────── */
+function navigate(page){
+  APP.page=page;
+  // Update sidebar active state
+  document.querySelectorAll('.sb-link').forEach(el=>el.classList.remove('active'));
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl) navEl.classList.add('active');
+  // Update bottom nav
+  document.querySelectorAll('.bn-item').forEach(el=>el.classList.remove('on'));
+  const bnEl=document.getElementById('bn-'+page);
+  if(bnEl) bnEl.classList.add('on');
+  // Set title
+  document.getElementById('page-title').textContent=PAGE_TITLES[page]||page;
+  renderCurrentPage();
+  if(window.innerWidth<=640) closeSidebar();
+}
+
+function renderCurrentPage(){
+  const el=document.getElementById('content-area');
+  const renderers={
+    home:renderOwnerHome, clients:renderClients, tasks:renderTasks,
+    content:renderContent, finance:renderFinance, team:renderTeam,
+    goals:renderGoals, onboarding:renderOnboarding,
+    vaportal:renderVAPortal, clientportal:renderClientPortal
+  };
+  const fn=renderers[APP.page]||(APP.role==='va'?renderVAPortal:APP.role==='client'?renderClientPortal:renderOwnerHome);
+  el.innerHTML=fn();
+  bindPageEvents();
+}
+
+/* ──────────────────────────────────────────────────────────
+   HELPER RENDERERS
+────────────────────────────────────────────────────────── */
+function tagHtml(priority){
+  const m={Urgent:'t-red',High:'t-amber',Medium:'t-navy',Low:'t-gray'};
+  return `<span class="tag ${m[priority]||'t-gray'}">${priority||'—'}</span>`;
+}
+function statusTag(s){
+  const m={Lead:'t-navy',Proposal:'t-gold',Onboarding:'t-gold',Active:'t-teal',Completed:'t-green',Archived:'t-gray'};
+  return m[s]||'t-gray';
+}
+function invoiceTag(s){
+  const m={Draft:'t-navy',Sent:'t-teal',Paid:'t-green',Overdue:'t-red'};
+  return m[s]||'t-gray';
+}
+function avColor(c){ return {navy:'av-navy',teal:'av-teal',gold:'av-gold',red:'av-red',green:'av-green'}[c]||'av-navy'; }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(ts){ if(!ts) return '—'; const d=ts.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}); }
+function relDate(dateStr){ if(!dateStr) return '—'; return dateStr<today()?`<span class="kpi-dn">Overdue</span>`:dateStr===today()?'<span style="color:var(--amber);font-weight:600">Today</span>':dateStr; }
+function emptyState(msg){ return `<div class="empty"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><div class="empty-text">${msg}</div></div>`; }
+function mrr(){ return APP.data.clients.filter(c=>c.status==='Active').reduce((a,c)=>a+(c.rate||0),0); }
+
+/* ──────────────────────────────────────────────────────────
+   OWNER — HOME
+────────────────────────────────────────────────────────── */
+function renderOwnerHome(){
+  const td=today();
+  const openTasks=APP.data.tasks.filter(t=>!t.done);
+  const overdueTasks=openTasks.filter(t=>t.dueDate&&t.dueDate<td);
+  const pendingApv=APP.data.content.filter(c=>c.status==='pending');
+  const activeClients=APP.data.clients.filter(c=>c.status==='Active');
+  const revenue=mrr();
+
+  return `
+  <div class="kpi-grid fade-up">
+    <div class="kpi-card" style="border-left-color:var(--teal)">
+      <div class="kpi-label">Monthly Revenue</div>
+      <div class="kpi-val" style="color:var(--teal)">₱${revenue.toLocaleString()}</div>
+      <div class="kpi-sub">${activeClients.length} active contracts</div>
+    </div>
+    <div class="kpi-card" style="border-left-color:var(--gold)">
+      <div class="kpi-label">Active Clients</div>
+      <div class="kpi-val" style="color:var(--gold-dark)">${activeClients.length}</div>
+      <div class="kpi-sub">${APP.data.clients.filter(c=>['Lead','Proposal'].includes(c.status)).length} in pipeline</div>
+    </div>
+    <div class="kpi-card" style="border-left-color:var(--navy)">
+      <div class="kpi-label">Open Tasks</div>
+      <div class="kpi-val" style="color:var(--navy)">${openTasks.length}</div>
+      <div class="kpi-sub kpi-${overdueTasks.length>0?'dn':'up'}">${overdueTasks.length} overdue</div>
+    </div>
+    <div class="kpi-card" style="border-left-color:var(--red)">
+      <div class="kpi-label">Awaiting Approval</div>
+      <div class="kpi-val" style="color:var(--red)">${pendingApv.length}</div>
+      <div class="kpi-sub">${pendingApv.length>0?'Action required':'All clear ✓'}</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px;margin-bottom:20px">
+    <div>
+      <div class="sec-head">
+        <div class="sec-title">Today's Tasks</div>
+        <span class="sec-action" onclick="openAddTask()">+ Add Task</span>
+      </div>
+      <div class="card">
+        ${APP.data.tasks.filter(t=>!t.done||t.dueDate===td).slice(0,8).map(t=>taskRowHtml(t)).join('')||emptyState('No tasks today.')}
+      </div>
+    </div>
+    <div>
+      <div class="sec-head"><div class="sec-title">VA Capacity</div><span class="sec-action" onclick="navigate('team')">View all →</span></div>
+      <div class="card">
+        ${APP.data.team.filter(v=>v.role!=='owner').map(va=>`
+        <div class="va-cap-row">
+          <div class="av av-sm ${avColor(va.avatarColor)}">${va.initials||'?'}</div>
+          <div class="va-cap-info">
+            <div class="va-cap-name">${va.displayName||va.email}</div>
+            <div class="va-cap-role">${va.role||'VA'}</div>
+            <div class="prog" style="margin-top:4px"><div class="prog-fill" style="width:${va.capacity||0}%;background:${(va.capacity||0)>=85?'var(--red)':(va.capacity||0)>=70?'var(--gold)':'var(--teal)'}"></div></div>
+          </div>
+          <div class="va-cap-pct" style="color:${(va.capacity||0)>=85?'var(--red)':(va.capacity||0)>=70?'var(--gold-dark)':'var(--teal-dark)'}">${va.capacity||0}%</div>
+        </div>`).join('')||emptyState('No VAs in system yet.')}
+      </div>
+      ${APP.data.team.some(v=>v.capacity>=85)?`<div style="margin-top:6px;padding:7px 10px;background:var(--red-pale);border-radius:var(--r);font-size:11px;color:var(--red);font-weight:600">⚠ ${APP.data.team.filter(v=>v.capacity>=85).map(v=>v.displayName||v.email).join(', ')} near capacity</div>`:''}
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin-bottom:20px">
+    <div>
+      <div class="sec-head">
+        <div class="sec-title">Content Approvals</div>
+        <span class="tag t-red">${pendingApv.length} pending</span>
+      </div>
+      ${pendingApv.slice(0,3).map(c=>approvalCardHtml(c)).join('')||`<div class="card card-pad" style="text-align:center;color:var(--green);font-weight:600">✓ All content approved!</div>`}
+    </div>
+    <div>
+      <div class="sec-head"><div class="sec-title">Q2 Goals</div><span class="sec-action" onclick="navigate('goals')">All →</span></div>
+      <div class="card">
+        ${APP.data.goals.slice(0,4).map(g=>{
+          const pct=Math.min(100,Math.round(((g.current||0)/(g.target||1))*100));
+          const col=g.status==='At Risk'?'var(--red)':g.status==='On Track'?'var(--teal)':'var(--gold)';
+          return `<div style="padding:9px 12px;border-bottom:1px solid var(--border)">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:600">${g.name}</span>
+              <span style="font-size:12px;font-weight:700;color:${col}">${pct}%</span>
+            </div>
+            <div class="prog"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+          </div>`;
+        }).join('')||emptyState('No goals set yet.')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function taskRowHtml(t){
+  const td=today();
+  const late=t.dueDate&&t.dueDate<td&&!t.done;
+  return `<div class="task-row${late?' overdue-row':''}" onclick="toggleTask('${t.id}')">
+    <div class="chk${t.done?' done':''}"></div>
+    <span class="task-name${t.done?' done':''}">${t.title||'Untitled'}</span>
+    <div class="task-meta">
+      ${t.assigneeInitials?`<div class="av av-xs ${avColor(t.assigneeColor)}">${t.assigneeInitials}</div>`:''}
+      <span style="font-size:10px;color:${late?'var(--red)':'var(--text3)'}">${late?'Overdue':t.dueDate||''}</span>
+      ${tagHtml(t.priority)}
+      <button class="btn-icon" onclick="event.stopPropagation();deleteTaskConfirm('${t.id}')" style="opacity:0;transition:opacity .15s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0">✕</button>
+    </div>
+  </div>`;
+}
+
+function approvalCardHtml(c){
+  return `<div class="card card-pad" id="apv-${c.id}" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">${c.title||'Untitled'}</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);margin-bottom:7px;flex-wrap:wrap">
+      <div class="av av-xs ${avColor(c.vaColor||'navy')}">${c.vaInitials||'?'}</div>
+      ${c.vaName||'VA'} · ${c.platform||'—'}
+      <span class="tag ${c.urgency==='red'?'t-red':c.urgency==='amber'?'t-amber':'t-gray'}">${c.dueLabel||'—'}</span>
+    </div>
+    <div style="display:flex;gap:5px">
+      <button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a7d9bb" onclick="approveContent('${c.id}')">✓ Approve</button>
+      <button class="btn btn-sm btn-secondary" onclick="reviseContent('${c.id}')">↩ Revision</button>
+    </div>
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   CLIENTS / PIPELINE
+────────────────────────────────────────────────────────── */
+function renderClients(){
+  const stages=['Lead','Proposal','Onboarding','Active','Completed'];
+  const colors={Lead:'var(--navy)',Proposal:'var(--gold)',Onboarding:'var(--teal)',Active:'var(--teal)',Completed:'var(--green)'};
+  const bgColors={Lead:'var(--navy-pale)',Proposal:'var(--gold-pale)',Onboarding:'var(--teal-pale)',Active:'var(--teal-pale)',Completed:'var(--green-pale)'};
+  const textColors={Lead:'var(--navy)',Proposal:'var(--gold-dark)',Onboarding:'var(--teal-dark)',Active:'var(--teal-dark)',Completed:'var(--green)'};
+
+  return `
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary btn-sm" onclick="openAddClient()">+ Add Client</button>
+    <span style="font-size:12px;color:var(--text3)">MRR: <strong style="color:var(--teal)">₱${mrr().toLocaleString()}</strong> · Total: ${APP.data.clients.length} clients</span>
+  </div>
+  <div class="pipeline">
+    ${stages.map(stage=>{
+      const cols=APP.data.clients.filter(c=>c.status===stage);
+      return `<div class="pipe-col">
+        <div class="pipe-col-head">${stage}
+          <span class="pipe-count" style="background:${bgColors[stage]};color:${textColors[stage]}">${cols.length}</span>
+        </div>
+        ${cols.map(c=>`
+        <div class="pipe-card" onclick="openClientPortal('${c.id}')">
+          <div class="pipe-card-bar" style="background:${colors[stage]}"></div>
+          <div class="pipe-card-name">${c.name}</div>
+          <div class="pipe-card-meta">${c.package||'—'}${!c.rate?' · TBD':''}</div>
+          ${c.rate?`<div class="pipe-card-rate" style="color:${colors[stage]}">₱${(c.rate||0).toLocaleString()}/mo</div>`:''}
+          <div style="display:flex;align-items:center;gap:3px;padding-left:8px">
+            <div class="av av-xs ${avColor(c.assignedVaColor||'navy')}">${c.assignedVaInitials||'?'}</div>
+            <span style="font-size:10px;color:var(--text3)">${(c.assignedVa||'').split(' ')[0]}</span>
+          </div>
+        </div>`).join('')}
+        <div class="pipe-add" onclick="openAddClientInStage('${stage}')">+ Add</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="sec-head"><div class="sec-title">All Clients</div></div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr>
+        <th>Client</th><th>Status</th><th>Package</th><th>Rate</th><th>VA</th><th>Priority</th><th>Last Contact</th>
+      </tr></thead>
+      <tbody>
+        ${APP.data.clients.map(c=>`
+        <tr onclick="openClientPortal('${c.id}')">
+          <td style="font-weight:600">${c.name}</td>
+          <td><span class="tag ${statusTag(c.status)}">${c.status}</span></td>
+          <td>${c.package||'—'}</td>
+          <td style="font-weight:600">${c.rate?'₱'+c.rate.toLocaleString():'—'}</td>
+          <td><div style="display:flex;align-items:center;gap:4px"><div class="av av-xs ${avColor(c.assignedVaColor||'navy')}">${c.assignedVaInitials||'?'}</div>${c.assignedVa||'—'}</div></td>
+          <td><span class="tag ${c.priority==='High'?'t-red':c.priority==='Medium'?'t-amber':'t-gray'}">${c.priority||'—'}</span></td>
+          <td style="font-size:11px;color:var(--text3)">${c.lastContact||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${APP.data.clients.length===0?emptyState('No clients yet. Add your first client above.'):''}
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   TASKS
+────────────────────────────────────────────────────────── */
+let taskFilter='open';
+function renderTasks(){
+  const td=today();
+  const filters={
+    all:APP.data.tasks,
+    today:APP.data.tasks.filter(t=>t.dueDate===td),
+    open:APP.data.tasks.filter(t=>!t.done),
+    overdue:APP.data.tasks.filter(t=>!t.done&&t.dueDate&&t.dueDate<td),
+    done:APP.data.tasks.filter(t=>t.done)
+  };
+  const shown=filters[taskFilter]||filters.all;
+  return `
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <div class="ftabs">
+      ${Object.keys(filters).map(f=>`<div class="ftab${taskFilter===f?' on':''}" onclick="setTaskFilter('${f}')">${f[0].toUpperCase()+f.slice(1)} <span style="opacity:.6">(${filters[f].length})</span></div>`).join('')}
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Add Task</button>
+  </div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th style="width:28px"></th><th>Task</th><th>Assignee</th><th>Priority</th><th>Due</th><th>Project</th><th style="width:30px"></th></tr></thead>
+      <tbody>
+        ${shown.map(t=>{
+          const late=t.dueDate&&t.dueDate<td&&!t.done;
+          return `<tr class="${late?'overdue-row':''}" onclick="toggleTask('${t.id}')">
+            <td><div class="chk${t.done?' done':''}"></div></td>
+            <td style="font-weight:${t.done?400:500}" class="${t.done?'task-name done':''}">${t.title||'Untitled'}</td>
+            <td><div style="display:flex;align-items:center;gap:4px"><div class="av av-xs ${avColor(t.assigneeColor||'navy')}">${t.assigneeInitials||'?'}</div></div></td>
+            <td>${tagHtml(t.priority)}</td>
+            <td class="${late?'overdue-cell':''}">${late?'Overdue':t.dueDate||'—'}</td>
+            <td style="font-size:11px;color:var(--text3)">${t.project||'—'}</td>
+            <td onclick="event.stopPropagation()"><button class="btn-icon" onclick="deleteTaskConfirm('${t.id}')">✕</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    ${shown.length===0?emptyState('No tasks in this filter.'):''}
+  </div>`;
+}
+function setTaskFilter(f){taskFilter=f;renderCurrentPage();}
+
+/* ──────────────────────────────────────────────────────────
+   CONTENT APPROVALS
+────────────────────────────────────────────────────────── */
+function renderContent(){
+  const pending=APP.data.content.filter(c=>c.status==='pending');
+  const approved=APP.data.content.filter(c=>c.status==='approved');
+  const revision=APP.data.content.filter(c=>c.status==='revision');
+  return `
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
+    <span class="tag t-red">${pending.length} Pending</span>
+    <span class="tag t-green">${approved.length} Approved</span>
+    <span class="tag t-amber">${revision.length} Revision</span>
+    <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openAddContent()">+ Add Content</button>
+  </div>
+  ${pending.length?`<div class="sec"><div class="sec-head"><div class="sec-title" style="color:var(--red)">Pending Approval</div></div>${pending.map(c=>approvalCardHtml(c)).join('')}</div>`:''}
+  ${approved.length?`<div class="sec"><div class="sec-head"><div class="sec-title" style="color:var(--green)">✓ Approved</div></div>
+    ${approved.map(c=>`<div class="card card-pad" style="margin-bottom:8px;border-left:3px solid var(--green);opacity:.75">
+      <div style="font-size:13px;font-weight:600">${c.title}</div>
+      <div style="font-size:11px;color:var(--text3)">${c.vaName} · ${c.platform} · Approved</div>
+    </div>`).join('')}</div>`:''}
+  ${revision.length?`<div class="sec"><div class="sec-head"><div class="sec-title" style="color:var(--amber)">↩ Revision Requested</div></div>
+    ${revision.map(c=>`<div class="card card-pad" style="margin-bottom:8px;border-left:3px solid var(--gold)">
+      <div style="font-size:13px;font-weight:600">${c.title}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px">${c.vaName} · ${c.platform}</div>
+      <button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a7d9bb" onclick="approveContent('${c.id}')">✓ Approve now</button>
+    </div>`).join('')}</div>`:''}
+  ${!pending.length&&!approved.length&&!revision.length?emptyState('No content in queue.'):''}`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   FINANCE
+────────────────────────────────────────────────────────── */
+function renderFinance(){
+  const invs=APP.data.invoices;
+  const paid=invs.filter(i=>i.status==='Paid').reduce((a,i)=>a+(i.amount||0),0);
+  const outstanding=invs.filter(i=>['Sent','Overdue'].includes(i.status)).reduce((a,i)=>a+(i.amount||0),0);
+  const overdue=invs.filter(i=>i.status==='Overdue').reduce((a,i)=>a+(i.amount||0),0);
+  return `
+  <div class="kpi-grid" style="margin-bottom:20px">
+    <div class="kpi-card" style="border-left-color:var(--teal)"><div class="kpi-label">MRR</div><div class="kpi-val" style="color:var(--teal)">₱${mrr().toLocaleString()}</div></div>
+    <div class="kpi-card" style="border-left-color:var(--green)"><div class="kpi-label">Collected</div><div class="kpi-val" style="color:var(--green)">₱${paid.toLocaleString()}</div></div>
+    <div class="kpi-card" style="border-left-color:var(--gold)"><div class="kpi-label">Outstanding</div><div class="kpi-val" style="color:var(--gold-dark)">₱${outstanding.toLocaleString()}</div></div>
+    <div class="kpi-card" style="border-left-color:var(--red)"><div class="kpi-label">Overdue</div><div class="kpi-val" style="color:var(--red)">₱${overdue.toLocaleString()}</div></div>
+  </div>
+  <div class="sec-head"><div class="sec-title">Invoice Tracker</div><button class="btn btn-primary btn-sm" onclick="openAddInvoice()">+ Invoice</button></div>
+  <div class="card">
+    <table class="data-table">
+      <thead><tr><th>Invoice #</th><th>Client</th><th>Status</th><th>Due Date</th><th>Amount</th><th>Action</th></tr></thead>
+      <tbody>
+        ${invs.map(inv=>`<tr>
+          <td style="font-size:11px;color:var(--text3)">${inv.number||inv.id.slice(0,8).toUpperCase()}</td>
+          <td style="font-weight:600">${inv.client||'—'}</td>
+          <td><span class="tag ${invoiceTag(inv.status)}">${inv.status}</span></td>
+          <td style="font-size:11px;color:${inv.status==='Overdue'?'var(--red)':'var(--text3)'}">${inv.dueDate||'—'}</td>
+          <td style="font-weight:700;color:${inv.status==='Paid'?'var(--green)':inv.status==='Overdue'?'var(--red)':'var(--text)'}">₱${(inv.amount||0).toLocaleString()}</td>
+          <td>${inv.status!=='Paid'?`<button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a7d9bb" onclick="markInvoicePaid('${inv.id}')">Mark Paid</button>`:'<span style="font-size:11px;color:var(--green)">✓ Paid</span>'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${invs.length===0?emptyState('No invoices yet.'):''}
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   TEAM
+────────────────────────────────────────────────────────── */
+function renderTeam(){
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+    <span style="font-size:13px;color:var(--text2)">${APP.data.team.length} team members</span>
+    <button class="btn btn-primary btn-sm" onclick="openInviteUser()">+ Invite Member</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+    ${APP.data.team.map(va=>`
+    <div class="card" style="cursor:pointer;transition:all .15s" onmouseover="this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='';this.style.transform=''">
+      <div style="padding:16px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--border)">
+        <div class="av av-lg ${avColor(va.avatarColor)}">${va.initials||'?'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600">${va.displayName||va.email}</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:5px">${va.role}</div>
+          <span class="tag ${va.status==='Active'?'t-teal':'t-gray'}">${va.status||'Active'}</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <div style="flex:1;text-align:center;padding:8px;background:var(--bg);border-radius:var(--r)">
+            <div style="font-size:16px;font-weight:700;color:var(--navy)">${APP.data.tasks.filter(t=>t.assigneeUid===va.id&&!t.done).length}</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase">Open Tasks</div>
+          </div>
+          <div style="flex:1;text-align:center;padding:8px;background:var(--bg);border-radius:var(--r)">
+            <div style="font-size:16px;font-weight:700;color:${(va.capacity||0)>=85?'var(--red)':(va.capacity||0)>=70?'var(--gold-dark)':'var(--teal)'}">${va.capacity||0}%</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase">Capacity</div>
+          </div>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:${va.capacity||0}%;background:${(va.capacity||0)>=85?'var(--red)':(va.capacity||0)>=70?'var(--gold)':'var(--teal)'}"></div></div>
+        ${va.skills&&va.skills.length?`<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">${va.skills.map(s=>`<span class="tag t-navy" style="font-size:9px">${s}</span>`).join('')}</div>`:''}
+      </div>
+    </div>`).join('')}
+    ${APP.data.team.length===0?emptyState('No team members yet.'):''}
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   GOALS
+────────────────────────────────────────────────────────── */
+function renderGoals(){
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <span style="font-size:13px;color:var(--text2)">${APP.data.goals.length} goals · ${APP.data.goals.filter(g=>g.status==='At Risk').length} at risk</span>
+    <button class="btn btn-primary btn-sm" onclick="openAddGoal()">+ Add Goal</button>
+  </div>
+  <div class="card">
+    ${APP.data.goals.map(g=>{
+      const pct=Math.min(100,Math.round(((g.current||0)/(g.target||1))*100));
+      const col=g.status==='At Risk'?'var(--red)':g.status==='On Track'?'var(--teal)':'var(--gold)';
+      return `<div style="padding:14px 16px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+          <div>
+            <div style="font-size:13px;font-weight:600">${g.name}</div>
+            <div style="font-size:10px;color:var(--text3)">${g.category} · ${g.quarter||'Q2'} ${g.year||2025}</div>
+          </div>
+          <div style="text-align:right;display:flex;align-items:center;gap:10px">
+            <div style="font-size:16px;font-weight:700;color:${col}">${pct}%</div>
+            <span class="tag ${g.status==='At Risk'?'t-red':g.status==='On Track'?'t-teal':'t-amber'}">${g.status}</span>
+            <button class="btn btn-sm btn-secondary" onclick="openUpdateGoal('${g.id}')">Update</button>
+          </div>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">${(g.current||0).toLocaleString()} / ${(g.target||0).toLocaleString()}</div>
+      </div>`;
+    }).join('')}
+    ${APP.data.goals.length===0?emptyState('No goals yet. Add your first goal.'):''}
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   ONBOARDING
+────────────────────────────────────────────────────────── */
+function renderOnboarding(){
+  const onboardingClients=APP.data.clients.filter(c=>c.status==='Onboarding');
+  const steps=['Contract Signed','Intake Form Sent','Intake Form Received','Kickoff Call Scheduled','Kickoff Done','Access Granted','Fully Onboarded'];
+  return `
+  <div style="margin-bottom:14px;font-size:13px;color:var(--text2)">${onboardingClients.length} client${onboardingClients.length!==1?'s':''} currently onboarding</div>
+  ${onboardingClients.map(c=>{
+    const completedSteps=c.onboardingStep||0;
+    const pct=Math.round((completedSteps/steps.length)*100);
+    return `<div class="card" style="margin-bottom:14px">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:14px;font-weight:700">${c.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${c.package} · ₱${(c.rate||0).toLocaleString()}/mo · VA: ${c.assignedVa||'—'}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:700;color:var(--gold)">${pct}%</div>
+          <div style="font-size:10px;color:var(--text3)">Step ${completedSteps} of ${steps.length}</div>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        ${steps.map((step,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:${i<steps.length-1?8:0}px">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${i<completedSteps?'var(--teal)':'var(--border2)'};background:${i<completedSteps?'var(--teal)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            ${i<completedSteps?`<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`:`<span style="font-size:9px;color:var(--text3)">${i+1}</span>`}
+          </div>
+          <span style="font-size:13px;color:${i<completedSteps?'var(--text)':'var(--text3)'};font-weight:${i<completedSteps?600:400}">${step}</span>
+          <span class="tag ${i<completedSteps?'t-green':'t-gray'}" style="margin-left:auto">${i<completedSteps?'Done':'Pending'}</span>
+          ${i===completedSteps?`<button class="btn btn-sm btn-primary" onclick="advanceOnboarding('${c.id}',${i+1})">Mark Done →</button>`:''}
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('')||emptyState('No clients currently onboarding.')}`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   VA PORTAL
+────────────────────────────────────────────────────────── */
+function renderVAPortal(){
+  const profile=APP.profile;
+  const myTasks=APP.data.tasks;
+  const myClients=APP.data.clients;
+  const myLogs=APP.data.timelogs;
+  const td=today();
+  const openTasks=myTasks.filter(t=>!t.done);
+  const overdueTasks=myTasks.filter(t=>!t.done&&t.dueDate&&t.dueDate<td);
+  const todayLogs=myLogs.filter(l=>l.date===td);
+  const todayMins=todayLogs.reduce((a,l)=>a+(l.minutes||0),0);
+
+  const tabContent={
+    dashboard:`
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--navy)">${openTasks.length}</div><div class="stat-lbl">Open Tasks</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:${overdueTasks.length>0?'var(--red)':'var(--green)'}">${overdueTasks.length}</div><div class="stat-lbl">Overdue</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--teal)">${Math.floor(todayMins/60)}h ${todayMins%60}m</div><div class="stat-lbl">Today's Time</div></div>
+      </div>
+      ${overdueTasks.length?`<div style="background:var(--red-pale);border:1px solid #f0b0b0;border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:12px;color:var(--red);font-weight:600">⚠ ${overdueTasks.length} overdue task${overdueTasks.length>1?'s':''}. Please update status or notify your account manager.</div>`:''}
+      <div class="sec-head"><div class="sec-title">Today's Focus</div><button class="btn btn-sm btn-primary" onclick="APP.va.tab='tasks';renderCurrentPage()">All Tasks →</button></div>
+      <div class="card">${openTasks.slice(0,6).map(t=>taskRowHtml(t)).join('')||emptyState('🎉 No open tasks! You\'re all caught up.')}</div>
+      <div class="sec-head" style="margin-top:16px"><div class="sec-title">My Active Clients</div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+        ${myClients.filter(c=>c.status==='Active').map(c=>`
+        <div class="card card-pad" style="cursor:pointer" onclick="navigate('clientportal')">
+          <div style="font-size:13px;font-weight:600;margin-bottom:2px">${c.name}</div>
+          <div style="font-size:10px;color:var(--text3);margin-bottom:6px">${c.package||'—'} · ₱${(c.rate||0).toLocaleString()}/mo</div>
+          <span class="tag t-teal">Active</span>
+        </div>`).join('')||emptyState('No active clients assigned yet.')}
+      </div>`,
+
+    tasks:`
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+        <div class="ftabs">
+          ${['open','today','overdue','done','all'].map(f=>`<div class="ftab${APP.va.taskFilter===f?' on':''}" onclick="APP.va.taskFilter='${f}';renderCurrentPage()">${f[0].toUpperCase()+f.slice(1)}</div>`).join('')}
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddVATask()">+ Add Task</button>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th style="width:28px"></th><th>Task</th><th>Priority</th><th>Due</th><th>Project</th><th>Status</th><th style="width:28px"></th></tr></thead>
+          <tbody>
+            ${(APP.va.taskFilter==='all'?myTasks:APP.va.taskFilter==='open'?myTasks.filter(t=>!t.done):APP.va.taskFilter==='done'?myTasks.filter(t=>t.done):APP.va.taskFilter==='today'?myTasks.filter(t=>t.dueDate===td):myTasks.filter(t=>!t.done&&t.dueDate&&t.dueDate<td))
+              .map(t=>{
+                const late=t.dueDate&&t.dueDate<td&&!t.done;
+                return `<tr class="${late?'overdue-row':''}" onclick="toggleTask('${t.id}')">
+                  <td><div class="chk${t.done?' done':''}"></div></td>
+                  <td style="font-weight:${t.done?400:500}" class="${t.done?'task-name done':''}">${t.title}</td>
+                  <td>${tagHtml(t.priority)}</td>
+                  <td class="${late?'overdue-cell':''}">${late?'Overdue':t.dueDate||'—'}</td>
+                  <td style="font-size:11px;color:var(--text3)">${t.project||'—'}</td>
+                  <td><span class="tag ${t.done?'t-green':late?'t-red':t.dueDate===td?'t-amber':'t-gray'}">${t.done?'Done':late?'Overdue':t.dueDate===td?'Due Today':'Open'}</span></td>
+                  <td><button class="btn-icon" onclick="event.stopPropagation();deleteTaskConfirm('${t.id}')">✕</button></td>
+                </tr>`;
+              }).join('')}
+          </tbody>
+        </table>
+        ${myTasks.length===0?emptyState('No tasks assigned to you yet.'):''}
+      </div>`,
+
+    timelog:`
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-val" style="color:var(--teal)">${Math.floor(todayMins/60)}h ${todayMins%60}m</div><div class="stat-lbl">Today</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--navy)">${Math.floor(myLogs.reduce((a,l)=>a+(l.minutes||0),0)/60)}h</div><div class="stat-lbl">Total Logged</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--gold-dark)">${myLogs.length}</div><div class="stat-lbl">Entries</div></div>
+      </div>
+      <div class="card card-pad" style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">⏱ Log Time</div>
+        <div class="timer-display" id="timer-disp">00:00:00</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px">
+          <button id="timer-start-btn" class="timer-btn timer-start" onclick="startTimer()">▶ Start</button>
+          <button class="timer-btn timer-reset" onclick="resetTimer()">↺ Reset</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">What did you work on? *</label><input class="form-control" id="timer-desc" placeholder="e.g. Scheduled BrandX Week 18 posts"></div>
+          <div class="form-group"><label class="form-label">Client / Project</label>
+            <select class="form-control" id="timer-project">
+              <option value="">— Select —</option>
+              ${myClients.filter(c=>c.status==='Active').map(c=>`<option>${c.name}</option>`).join('')}
+              <option>Admin</option><option>Internal</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Or enter minutes manually</label><input type="number" class="form-control" id="timer-manual" placeholder="e.g. 45" min="1"></div>
+          <div class="form-group" style="display:flex;align-items:flex-end">
+            <button class="btn btn-primary w-full" onclick="logTime()">📋 Log Entry</button>
+          </div>
+        </div>
+      </div>
+      <div class="sec-head"><div class="sec-title">Time Log History</div></div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Description</th><th>Project</th><th style="text-align:right">Duration</th><th style="width:30px"></th></tr></thead>
+          <tbody>
+            ${myLogs.map(l=>`<tr>
+              <td style="font-size:11px;color:var(--text3)">${l.date||'—'}</td>
+              <td>${l.description||'—'}</td>
+              <td style="font-size:11px;color:var(--text3)">${l.project||'—'}</td>
+              <td style="text-align:right;font-weight:700">${Math.floor((l.minutes||0)/60)}h ${(l.minutes||0)%60}m</td>
+              <td><button class="btn-icon" onclick="deleteTimelog('${l.id}')">✕</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        ${myLogs.length===0?emptyState('No time entries yet. Start the timer or log manually.'):''}
+      </div>`,
+
+    sops:`
+      <div style="margin-bottom:14px;font-size:13px;color:var(--text2)">Standard Operating Procedures — your TJC reference guide</div>
+      ${[
+        {emoji:'📱',title:'Social Media Scheduling SOP',steps:['Download assets from Google Drive','Write caption using brand voice guide','Add hashtags from approved bank','Schedule via Meta Business Suite or Buffer','Screenshot confirmation → add to weekly report']},
+        {emoji:'📊',title:'Weekly Report Protocol',steps:['Open the Weekly Report template in Google Docs','Fill in posts published, engagement, tasks completed, next week plan','Send to Justine for review by Thursday 5PM PHT','Send approved version to client via TJC email template','Log report as a completed task in the OS']},
+        {emoji:'🔑',title:'Client Access & Password Protocol',steps:['Never screenshot or share passwords in personal chats','All credentials stored in TJC password manager (shared vault)','Request access via Justine — never ask client directly','Log out of all client accounts after every session','Report access issues to Justine within 1 hour']},
+        {emoji:'✅',title:'Task Update Protocol',steps:['Update task status at start and end of each workday','Add notes to blocked tasks explaining the blocker','Mark Done only when deliverable is fully complete','Log time against each task in the Time Log tab','If a task will be late, notify Grace (AM) immediately']},
+        {emoji:'🙏',title:'TJC Values & Culture',steps:['Excellence is non-negotiable — represent TJC with pride','Faith-driven: we work as unto the Lord (Col. 3:23)','Communication: respond within 2 hours during work hours','Integrity: never promise what you cannot deliver','Growth mindset: every mistake is a learning opportunity']},
+      ].map((s,i)=>`
+      <div class="sop-card">
+        <div class="sop-head" onclick="toggleSOP(${i})">
+          <span style="font-size:20px">${s.emoji}</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">${s.title}</div></div>
+          <svg id="sop-arr-${i}" viewBox="0 0 12 12" fill="none" width="12" height="12" style="transition:transform .2s;flex-shrink:0"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="sop-body" id="sop-${i}">
+          ${s.steps.map((step,si)=>`<div style="display:flex;gap:10px;margin-bottom:${si<s.steps.length-1?8:0}px">
+            <div style="width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${si+1}</div>
+            <div style="font-size:13px;line-height:1.5">${step}</div>
+          </div>`).join('')}
+        </div>
+      </div>`).join('')}`,
+  };
+
+  return `
+  <div style="background:var(--navy);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--r2) var(--r2) 0 0;margin:-20px -20px 0">
+    <div>
+      <div style="font-size:11px;color:rgba(255,255,255,.55)">Welcome back</div>
+      <div style="font-size:16px;font-weight:700;color:#fff">${profile.displayName||profile.email} · ${profile.role==='va'?'Virtual Assistant':'Owner'}</div>
+    </div>
+    <div class="av av-md ${avColor(profile.avatarColor)}">${profile.initials||'?'}</div>
+  </div>
+  <div style="background:var(--surface);border-bottom:1px solid var(--border);padding:0 0;display:flex;overflow-x:auto;border-radius:0;margin:0 -20px;padding:0 20px">
+    ${['dashboard','tasks','timelog','sops'].map(t=>`<div class="ptab${APP.va.tab===t?' on':''}" onclick="APP.va.tab='${t}';renderCurrentPage()">${{dashboard:'🏠 Dashboard',tasks:'✅ Tasks',timelog:'⏱ Time Log',sops:'📋 SOPs'}[t]}</div>`).join('')}
+  </div>
+  <div style="padding-top:16px">${tabContent[APP.va.tab]||''}</div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   CLIENT PORTAL
+────────────────────────────────────────────────────────── */
+function openClientPortal(clientId){ APP.cp.clientId=clientId; APP.cp.tab='overview'; navigate('clientportal'); }
+
+function renderClientPortal(){
+  if(APP.role==='owner'&&!APP.cp.clientId){
+    // Owner: show client selector
+    return `
+    <div style="max-width:700px;margin:0 auto">
+      <div style="margin-bottom:16px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px">Client Portal</div>
+        <div style="font-size:13px;color:var(--text3)">Select a client to view their full profile.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${APP.data.clients.filter(c=>['Active','Onboarding','Completed'].includes(c.status)).map(c=>`
+        <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s" onmouseover="this.style.boxShadow='var(--shadow)';this.style.transform='translateX(3px)'" onmouseout="this.style.boxShadow='';this.style.transform=''" onclick="openClientPortal('${c.id}')">
+          <div class="av av-md ${avColor(c.assignedVaColor||'navy')}">${c.assignedVaInitials||'?'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600">${c.name}</div>
+            <div style="font-size:11px;color:var(--text3)">${c.package||'—'} · ${c.assignedVa||'—'} · Last contact: ${c.lastContact||'—'}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="tag ${statusTag(c.status)}">${c.status}</span>
+            <span style="font-size:13px;font-weight:700;color:var(--teal)">₱${(c.rate||0).toLocaleString()}/mo</span>
+            <svg viewBox="0 0 12 12" fill="none" width="12" height="12"><path d="M4.5 2.5l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>`).join('')}
+        ${APP.data.clients.filter(c=>['Active','Onboarding','Completed'].includes(c.status)).length===0?emptyState('No active clients yet.'):''}
+      </div>
+    </div>`;
+  }
+
+  const clientId = APP.role==='client'
+    ? APP.data.clients[0]?.id
+    : APP.cp.clientId;
+  const c = APP.data.clients.find(x=>x.id===clientId);
+  if(!c) return `<div style="text-align:center;padding:40px"><p style="color:var(--text3)">Client not found.</p>${APP.role==='owner'?`<button class="btn btn-secondary" onclick="APP.cp.clientId=null;renderCurrentPage()">← Back</button>`:''}</div>`;
+
+  const myTasks=APP.data.tasks.filter(t=>t.project===c.name);
+  const myInvoices=APP.data.invoices.filter(i=>i.client===c.name);
+  const totalBilled=myInvoices.reduce((a,i)=>a+(i.amount||0),0);
+  const totalPaid=myInvoices.filter(i=>i.status==='Paid').reduce((a,i)=>a+(i.amount||0),0);
+
+  const tabContents={
+    overview:`
+      <div class="info-grid">
+        <div class="info-box"><div class="info-label-sm">Status</div><div class="info-val"><span class="tag ${statusTag(c.status)}">${c.status}</span></div></div>
+        <div class="info-box"><div class="info-label-sm">Package</div><div class="info-val">${c.package||'—'}</div></div>
+        <div class="info-box"><div class="info-label-sm">Monthly Rate</div><div class="info-val" style="color:var(--teal)">₱${(c.rate||0).toLocaleString()}</div></div>
+        <div class="info-box"><div class="info-label-sm">Assigned VA</div><div class="info-val">${c.assignedVa||'—'}</div></div>
+        <div class="info-box"><div class="info-label-sm">Last Contact</div><div class="info-val">${c.lastContact||'—'}</div></div>
+        <div class="info-box"><div class="info-label-sm">Contract End</div><div class="info-val">${c.contractEnd||'Ongoing'}</div></div>
+        <div class="info-box"><div class="info-label-sm">Priority</div><div class="info-val"><span class="tag ${c.priority==='High'?'t-red':c.priority==='Medium'?'t-amber':'t-gray'}">${c.priority||'—'}</span></div></div>
+        <div class="info-box"><div class="info-label-sm">Time Zone</div><div class="info-val">${c.timezone||'PHT (UTC+8)'}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+        <div class="stat-box"><div class="stat-val" style="color:var(--navy)">${myTasks.filter(t=>!t.done).length}</div><div class="stat-lbl">Open Tasks</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--green)">${myTasks.filter(t=>t.done).length}</div><div class="stat-lbl">Done Tasks</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:var(--teal)">₱${totalPaid.toLocaleString()}</div><div class="stat-lbl">Total Paid</div></div>
+        <div class="stat-box"><div class="stat-val" style="color:${(totalBilled-totalPaid)>0?'var(--red)':'var(--green)'}">₱${(totalBilled-totalPaid).toLocaleString()}</div><div class="stat-lbl">Outstanding</div></div>
+      </div>
+      ${APP.role==='owner'?`
+      <div class="card card-pad">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Quick Edit</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="cp-status">${['Lead','Proposal','Onboarding','Active','Completed','Archived'].map(s=>`<option${s===c.status?' selected':''}>${s}</option>`).join('')}</select></div>
+          <div class="form-group"><label class="form-label">Last Contact</label><input type="date" class="form-control" id="cp-lastcontact" value="${c.lastContact||''}"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveCPQuickEdit('${c.id}')">Save</button>
+      </div>`:''}`,
+
+    tasks:`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="display:flex;gap:6px"><span class="tag t-navy">${myTasks.filter(t=>!t.done).length} Open</span><span class="tag t-green">${myTasks.filter(t=>t.done).length} Done</span></div>
+        ${APP.role==='owner'?`<button class="btn btn-primary btn-sm" onclick="openAddTaskForClient('${c.name}')">+ Add Task</button>`:''}
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th style="width:28px"></th><th>Task</th><th>Assignee</th><th>Priority</th><th>Due</th><th>Status</th></tr></thead>
+          <tbody>
+            ${myTasks.map(t=>{
+              const late=t.dueDate&&t.dueDate<today()&&!t.done;
+              return `<tr class="${late?'overdue-row':''}" onclick="${APP.role!=='client'?`toggleTask('${t.id}')`:''}" style="cursor:${APP.role!=='client'?'pointer':'default'}">
+                <td><div class="chk${t.done?' done':''}"></div></td>
+                <td style="font-weight:${t.done?400:500}" class="${t.done?'task-name done':''}">${t.title}</td>
+                <td><div class="av av-xs ${avColor(t.assigneeColor||'navy')}">${t.assigneeInitials||'?'}</div></td>
+                <td>${tagHtml(t.priority)}</td>
+                <td class="${late?'overdue-cell':''}">${late?'Overdue':t.dueDate||'—'}</td>
+                <td><span class="tag ${t.done?'t-green':late?'t-red':'t-gray'}">${t.done?'Done':late?'Overdue':'Open'}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        ${myTasks.length===0?emptyState('No tasks for this client yet.'):''}
+      </div>`,
+
+    deliverables:`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:13px;color:var(--text2)">${(c.deliverables||[]).length} deliverables</span>
+        ${APP.role==='owner'?`<button class="btn btn-primary btn-sm" onclick="openAddDeliverable('${c.id}')">+ Add</button>`:''}
+      </div>
+      <div class="card">
+        ${(c.deliverables||[]).map((d,i)=>`
+        <div class="deliv-row">
+          <div class="deliv-icon" style="background:${d.type==='Report'?'var(--navy-pale)':d.type==='Design'?'var(--gold-pale)':'var(--teal-pale)'}">${d.type==='Report'?'📊':d.type==='Design'?'🎨':d.type==='Video'?'🎬':'📦'}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500">${d.name}</div>
+            <div style="display:flex;gap:6px;margin-top:2px"><span class="tag t-navy" style="font-size:9px">${d.type||'Other'}</span>${d.url?`<a href="${d.url}" target="_blank" style="font-size:10px;color:var(--teal)">🔗 View</a>`:''}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:10px;color:var(--text3)">${d.date||'—'}</div>
+            <span class="tag ${d.status==='Approved'?'t-green':d.status==='Pending'?'t-amber':'t-gray'}">${d.status||'Draft'}</span>
+          </div>
+          ${APP.role==='owner'?`<button class="btn-icon" onclick="removeDeliverable('${c.id}',${i})">✕</button>`:''}
+        </div>`).join('')}
+        ${!(c.deliverables||[]).length?emptyState('No deliverables yet.'):''}
+      </div>`,
+
+    finance:`
+      <div class="info-grid" style="margin-bottom:16px">
+        <div class="info-box"><div class="info-label-sm">Total Billed</div><div class="info-val" style="color:var(--navy)">₱${totalBilled.toLocaleString()}</div></div>
+        <div class="info-box"><div class="info-label-sm">Total Paid</div><div class="info-val" style="color:var(--green)">₱${totalPaid.toLocaleString()}</div></div>
+        <div class="info-box"><div class="info-label-sm">Outstanding</div><div class="info-val" style="color:${(totalBilled-totalPaid)>0?'var(--red)':'var(--green)'}">₱${(totalBilled-totalPaid).toLocaleString()}</div></div>
+        <div class="info-box"><div class="info-label-sm">Monthly Rate</div><div class="info-val" style="color:var(--teal)">₱${(c.rate||0).toLocaleString()}</div></div>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Invoice #</th><th>Status</th><th>Due</th><th>Amount</th>${APP.role==='owner'?'<th>Action</th>':''}</tr></thead>
+          <tbody>
+            ${myInvoices.map(inv=>`<tr>
+              <td style="font-size:11px;color:var(--text3)">${inv.number||inv.id.slice(0,8).toUpperCase()}</td>
+              <td><span class="tag ${invoiceTag(inv.status)}">${inv.status}</span></td>
+              <td style="font-size:11px">${inv.dueDate||'—'}</td>
+              <td style="font-weight:700;color:${inv.status==='Paid'?'var(--green)':inv.status==='Overdue'?'var(--red)':'var(--text)'}">₱${(inv.amount||0).toLocaleString()}</td>
+              ${APP.role==='owner'?`<td>${inv.status!=='Paid'?`<button class="btn btn-sm" style="background:var(--green-pale);color:var(--green);border:1px solid #a7d9bb" onclick="markInvoicePaid('${inv.id}')">Mark Paid</button>`:'✓'}</td>`:''}</tr>`).join('')}
+          </tbody>
+        </table>
+        ${myInvoices.length===0?emptyState('No invoices for this client.'):''}
+      </div>`,
+
+    notes:`
+      ${APP.role==='owner'||APP.role==='va'?`
+      <div class="card card-pad" style="margin-bottom:14px">
+        <div class="form-group"><label class="form-label">Note Type</label><select class="form-control" id="note-type" style="margin-bottom:8px"><option>General</option><option>Meeting Notes</option><option>Feedback</option><option>Instruction</option><option>Concern</option></select></div>
+        <textarea class="form-control" id="note-text" rows="3" placeholder="Add a note — instructions, meeting notes, client feedback…"></textarea>
+        <button class="btn btn-primary" style="margin-top:8px" onclick="addClientNote('${c.id}')">+ Save Note</button>
+      </div>`:''}
+      ${(c.notes||[]).slice().reverse().map((n,i)=>`
+      <div class="note-card">
+        <div class="note-meta">
+          <span class="tag ${n.type==='Concern'?'t-red':n.type==='Feedback'?'t-teal':n.type==='Instruction'?'t-gold':'t-gray'}" style="font-size:9px">${n.type||'General'}</span>
+          ${n.date||'—'}
+          ${APP.role==='owner'?`<button class="btn-icon" style="margin-left:auto" onclick="removeClientNote('${c.id}',${(c.notes||[]).length-1-i})">✕</button>`:''}
+        </div>
+        <div style="font-size:13px;line-height:1.6">${n.text}</div>
+      </div>`).join('')}
+      ${!(c.notes||[]).length?emptyState('No notes yet.'):''}`,
+
+    access:`
+      <div style="background:var(--red-pale);border:1px solid #f0b0b0;border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--red)">
+        🔒 <strong>Confidential.</strong> Store credentials securely. Never share via personal chat. Use TJC password manager.
+      </div>
+      ${APP.role==='owner'||APP.role==='va'?`
+      <div class="card card-pad" style="margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Social Accounts</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Facebook Page</label><input class="form-control" id="s-fb" value="${(c.socials||{}).facebook||''}" placeholder="https://facebook.com/…"></div>
+          <div class="form-group"><label class="form-label">Instagram</label><input class="form-control" id="s-ig" value="${(c.socials||{}).instagram||''}" placeholder="@handle"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">TikTok</label><input class="form-control" id="s-tt" value="${(c.socials||{}).tiktok||''}" placeholder="@handle"></div>
+          <div class="form-group"><label class="form-label">Website</label><input class="form-control" id="s-web" value="${(c.socials||{}).website||''}" placeholder="https://…"></div>
+        </div>
+        <button class="btn btn-primary" onclick="saveSocials('${c.id}')">Save Socials</button>
+      </div>
+      <div class="sec-head"><div class="sec-title">Tools & Access</div><button class="btn btn-primary btn-sm" onclick="openAddTool('${c.id}')">+ Add Tool</button></div>
+      <div class="card">
+        ${(c.tools||[]).map((t,i)=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border)">
+          <div style="font-size:18px;flex-shrink:0">${t.emoji||'🔧'}</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:10px;color:var(--text3)">${t.username||''} ${t.note?'· '+t.note:''}</div></div>
+          <span class="tag ${t.hasAccess?'t-green':'t-red'}">${t.hasAccess?'✓ Access OK':'No Access'}</span>
+          <button class="btn-icon" onclick="removeTool('${c.id}',${i})">✕</button>
+        </div>`).join('')}
+        ${!(c.tools||[]).length?emptyState('No tools listed yet.'):''}
+      </div>`:'<div class="card card-pad empty-text">Access details are managed by TJC team.</div>'}`,
+  };
+
+  return `
+  <div style="max-width:920px;margin:0 auto">
+    ${APP.role==='owner'?`<button class="btn btn-secondary btn-sm" style="margin-bottom:12px" onclick="APP.cp.clientId=null;renderCurrentPage()">← All Clients</button>`:''}
+    <div class="cp-hero">
+      <div style="position:relative;z-index:1">
+        <div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:3px">${c.package||'—'} · ${c.assignedVa||'—'}</div>
+        <div style="font-size:22px;font-weight:700;margin-bottom:4px">${c.name}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65)">₱${(c.rate||0).toLocaleString()}/mo · Contract: ${c.contractEnd||'Ongoing'}</div>
+        <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+          <span style="padding:3px 9px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(255,255,255,.12);color:#fff">${c.status}</span>
+          <span style="padding:3px 9px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(255,255,255,.12);color:#fff">${c.priority||'Medium'} Priority</span>
+        </div>
+      </div>
+    </div>
+    <div class="cp-tabs-bar">
+      ${['overview','tasks','deliverables','finance','notes','access'].map(t=>`<div class="cptab${APP.cp.tab===t?' on':''}" onclick="APP.cp.tab='${t}';renderCurrentPage()">${{overview:'📊 Overview',tasks:'✅ Tasks',deliverables:'📦 Deliverables',finance:'💰 Finance',notes:'📝 Notes',access:'🔑 Access'}[t]}</div>`).join('')}
+    </div>
+    <div>${tabContents[APP.cp.tab]||''}</div>
+  </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   FIRESTORE CRUD ACTIONS
+────────────────────────────────────────────────────────── */
+async function toggleTask(id){
+  const t=APP.data.tasks.find(x=>x.id===id);
+  if(!t) return;
+  try{
+    await updateDoc('tasks',id,{done:!t.done,doneAt:!t.done?today():null});
+    toast(!t.done?'Task marked complete! ✓':'Task reopened.',!t.done?'success':'warning');
+  } catch(e){ toast('Error updating task.','error'); console.error(e); }
+}
+
+async function deleteTaskConfirm(id){
+  const t=APP.data.tasks.find(x=>x.id===id);
+  openModal('Delete Task',`<p style="font-size:13px">Delete "<strong>${t?.title||'this task'}</strong>"? This cannot be undone.</p>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+     <button class="btn btn-danger" onclick="deleteTaskNow('${id}')">Delete</button>`);
+}
+async function deleteTaskNow(id){
+  try{ await deleteDoc('tasks',id); closeModal(); toast('Task deleted.','warning'); }
+  catch(e){ toast('Error deleting task.','error'); }
+}
+
+async function approveContent(id){
+  try{ await updateDoc('content',id,{status:'approved',approvedAt:today(),approvedBy:uid()}); toast('Content approved!','success'); }
+  catch(e){ toast('Error.','error'); }
+}
+async function reviseContent(id){
+  try{ await updateDoc('content',id,{status:'revision',revisedAt:today(),revisedBy:uid()}); toast('Revision requested.','warning'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+async function markInvoicePaid(id){
+  try{ await updateDoc('invoices',id,{status:'Paid',paidAt:today()}); toast('Invoice marked as paid!','success'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+async function advanceOnboarding(clientId, step){
+  try{ await updateDoc('clients',clientId,{onboardingStep:step}); toast('Onboarding step completed!','success'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+async function saveCPQuickEdit(clientId){
+  try{
+    await updateDoc('clients',clientId,{
+      status:document.getElementById('cp-status').value,
+      lastContact:document.getElementById('cp-lastcontact').value
+    });
+    toast('Client updated!','success');
+  } catch(e){ toast('Error.','error'); }
+}
+
+async function addClientNote(clientId){
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const text=document.getElementById('note-text').value.trim();
+  if(!text){ toast('Please write a note.','error'); return; }
+  const notes=[...(c.notes||[]),{text,type:document.getElementById('note-type').value,date:new Date().toLocaleDateString('en-PH',{month:'short',day:'numeric',year:'numeric'}),addedBy:APP.profile.displayName}];
+  try{ await updateDoc('clients',clientId,{notes}); toast('Note saved!','success'); document.getElementById('note-text').value=''; }
+  catch(e){ toast('Error.','error'); }
+}
+async function removeClientNote(clientId,idx){
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const notes=[...(c.notes||[])]; notes.splice(idx,1);
+  try{ await updateDoc('clients',clientId,{notes}); toast('Note removed.','warning'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+async function saveSocials(clientId){
+  const socials={facebook:document.getElementById('s-fb').value,instagram:document.getElementById('s-ig').value,tiktok:document.getElementById('s-tt').value,website:document.getElementById('s-web').value};
+  try{ await updateDoc('clients',clientId,{socials}); toast('Socials saved!','success'); }
+  catch(e){ toast('Error.','error'); }
+}
+async function removeDeliverable(clientId,idx){
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const deliverables=[...(c.deliverables||[])]; deliverables.splice(idx,1);
+  try{ await updateDoc('clients',clientId,{deliverables}); toast('Removed.','warning'); }
+  catch(e){ toast('Error.','error'); }
+}
+async function removeTool(clientId,idx){
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const tools=[...(c.tools||[])]; tools.splice(idx,1);
+  try{ await updateDoc('clients',clientId,{tools}); toast('Removed.','warning'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+async function deleteTimelog(id){
+  try{ await deleteDoc('timelogs',id); toast('Entry deleted.','warning'); }
+  catch(e){ toast('Error.','error'); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   TIMER
+────────────────────────────────────────────────────────── */
+function startTimer(){
+  if(APP.timer.running) return;
+  APP.timer.running=true;
+  APP.timer.start=Date.now()-APP.timer.elapsed*1000;
+  APP.timer.iv=setInterval(()=>{
+    APP.timer.elapsed=Math.floor((Date.now()-APP.timer.start)/1000);
+    const el=document.getElementById('timer-disp');
+    if(el){const h=String(Math.floor(APP.timer.elapsed/3600)).padStart(2,'0'),m=String(Math.floor((APP.timer.elapsed%3600)/60)).padStart(2,'0'),s=String(APP.timer.elapsed%60).padStart(2,'0');el.textContent=`${h}:${m}:${s}`;}
+  },1000);
+  const btn=document.getElementById('timer-start-btn');
+  if(btn){btn.textContent='⏹ Stop';btn.className='timer-btn timer-stop';btn.onclick=stopTimer;}
+}
+function stopTimer(){
+  clearInterval(APP.timer.iv); APP.timer.running=false;
+  const btn=document.getElementById('timer-start-btn');
+  if(btn){btn.textContent='▶ Start';btn.className='timer-btn timer-start';btn.onclick=startTimer;}
+  toast('Timer stopped. Log your entry below.','warning');
+}
+function resetTimer(){
+  clearInterval(APP.timer.iv); APP.timer.running=false; APP.timer.elapsed=0;
+  const el=document.getElementById('timer-disp'); if(el) el.textContent='00:00:00';
+  const btn=document.getElementById('timer-start-btn');
+  if(btn){btn.textContent='▶ Start';btn.className='timer-btn timer-start';btn.onclick=startTimer;}
+}
+async function logTime(){
+  const desc=document.getElementById('timer-desc')?.value.trim();
+  const project=document.getElementById('timer-project')?.value;
+  const manual=parseInt(document.getElementById('timer-manual')?.value)||0;
+  const timerMins=Math.floor(APP.timer.elapsed/60);
+  const minutes=manual||timerMins;
+  if(!minutes||minutes<=0){toast('Please run the timer or enter minutes.','error');return;}
+  if(!desc){toast('Please describe what you worked on.','error');return;}
+  try{
+    await addDoc('timelogs',{vaUid:uid(),vaName:APP.profile.displayName,vaInitials:APP.profile.initials,date:today(),description:desc,project,minutes});
+    resetTimer(); if(document.getElementById('timer-desc')) document.getElementById('timer-desc').value='';
+    toast(`Logged ${Math.floor(minutes/60)}h ${minutes%60}m — great work! 🎉`,'success');
+  } catch(e){toast('Error logging time.','error');console.error(e);}
+}
+
+/* ──────────────────────────────────────────────────────────
+   MODALS — FORMS
+────────────────────────────────────────────────────────── */
+function openQuickAdd(){
+  const role=APP.role;
+  if(role==='owner') openAddTask();
+  else if(role==='va') openAddVATask();
+}
+
+function openAddTask(){
+  const vaOptions=APP.data.team.map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}">${v.displayName||v.email}</option>`).join('');
+  const clientOptions=APP.data.clients.map(c=>`<option>${c.name}</option>`).join('');
+  openModal('Add New Task',`
+    <div class="form-group"><label class="form-label">Task Title *</label><input class="form-control" id="f-task-title" placeholder="e.g. Schedule BrandX Week 18 posts"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Assign To</label><select class="form-control" id="f-task-va">${vaOptions}</select></div>
+      <div class="form-group"><label class="form-label">Priority</label><select class="form-control" id="f-task-pri"><option>Urgent</option><option selected>High</option><option>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-control" id="f-task-due" value="${today()}"></div>
+      <div class="form-group"><label class="form-label">Client / Project</label><select class="form-control" id="f-task-proj"><option value="">— None —</option>${clientOptions}<option>Admin</option><option>Internal</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-control" id="f-task-notes" rows="2" placeholder="Any context or instructions…"></textarea></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Add Task</button>`);
+}
+
+function openAddVATask(){
+  const clientOptions=APP.data.clients.filter(c=>c.status==='Active').map(c=>`<option>${c.name}</option>`).join('');
+  openModal('Add Task',`
+    <div class="form-group"><label class="form-label">Task Title *</label><input class="form-control" id="f-task-title" placeholder="e.g. Schedule BrandX posts"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Priority</label><select class="form-control" id="f-task-pri"><option>Urgent</option><option selected>High</option><option>Medium</option><option>Low</option></select></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-control" id="f-task-due" value="${today()}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Client / Project</label><select class="form-control" id="f-task-proj"><option value="">— None —</option>${clientOptions}<option>Admin</option></select></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Add Task</button>`);
+}
+
+async function saveTask(){
+  const title=document.getElementById('f-task-title').value.trim();
+  if(!title){toast('Please enter a task title.','error');return;}
+  const vaEl=document.getElementById('f-task-va');
+  const vaParts=vaEl?vaEl.value.split('|'):[];
+  const assigneeUid=vaParts[0]||uid();
+  const assigneeName=vaParts[1]||APP.profile.displayName;
+  const assigneeInitials=vaParts[2]||APP.profile.initials;
+  const assigneeColor=vaParts[3]||APP.profile.avatarColor;
+  try{
+    await addDoc('tasks',{title,done:false,priority:document.getElementById('f-task-pri').value,dueDate:document.getElementById('f-task-due').value,project:document.getElementById('f-task-proj')?.value||'',notes:document.getElementById('f-task-notes')?.value||'',assigneeUid,assigneeName,assigneeInitials,assigneeColor});
+    closeModal(); toast('Task added!','success');
+  } catch(e){toast('Error adding task.','error');console.error(e);}
+}
+
+function openAddClient(){ openAddClientInStage('Lead'); }
+function openAddClientInStage(stage='Lead'){
+  const vaOptions=APP.data.team.filter(v=>v.role!=='owner').map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}">${v.displayName||v.email}</option>`).join('');
+  openModal('Add New Client',`
+    <div class="form-group"><label class="form-label">Client Name *</label><input class="form-control" id="f-cl-name" placeholder="e.g. BrandX Philippines"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-cl-status">${['Lead','Proposal','Onboarding','Active'].map(s=>`<option${s===stage?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Package</label><select class="form-control" id="f-cl-pkg"><option>Starter</option><option selected>Growth</option><option>Premium</option><option>Custom</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Monthly Rate (₱)</label><input type="number" class="form-control" id="f-cl-rate" placeholder="15000"></div>
+      <div class="form-group"><label class="form-label">Priority</label><select class="form-control" id="f-cl-pri"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Assigned VA</label><select class="form-control" id="f-cl-va">${vaOptions}</select></div>
+      <div class="form-group"><label class="form-label">Contract End</label><input type="date" class="form-control" id="f-cl-end"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="f-cl-email" placeholder="contact@brand.com"></div>
+      <div class="form-group"><label class="form-label">Time Zone</label><input class="form-control" id="f-cl-tz" value="PHT (UTC+8)" placeholder="PHT (UTC+8)"></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveClient()">Add Client</button>`);
+}
+
+async function saveClient(){
+  const name=document.getElementById('f-cl-name').value.trim();
+  if(!name){toast('Please enter a client name.','error');return;}
+  const vaParts=(document.getElementById('f-cl-va').value||'').split('|');
+  try{
+    await addDoc('clients',{name,status:document.getElementById('f-cl-status').value,package:document.getElementById('f-cl-pkg').value,rate:parseInt(document.getElementById('f-cl-rate').value)||0,priority:document.getElementById('f-cl-pri').value,assignedVaUid:vaParts[0]||'',assignedVa:vaParts[1]||'',assignedVaInitials:vaParts[2]||'',assignedVaColor:vaParts[3]||'navy',contractEnd:document.getElementById('f-cl-end').value,email:document.getElementById('f-cl-email').value,timezone:document.getElementById('f-cl-tz').value,lastContact:today(),notes:[],deliverables:[],tools:[],socials:{}});
+    closeModal(); toast('Client added!','success');
+  } catch(e){toast('Error adding client.','error');console.error(e);}
+}
+
+function openAddContent(){
+  const vaOptions=APP.data.team.filter(v=>v.role!=='owner').map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}">${v.displayName||v.email}</option>`).join('');
+  openModal('Add Content for Approval',`
+    <div class="form-group"><label class="form-label">Content Title *</label><input class="form-control" id="f-ct-title" placeholder="e.g. BrandX May Week 1 Carousel"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Assigned VA</label><select class="form-control" id="f-ct-va">${vaOptions}</select></div>
+      <div class="form-group"><label class="form-label">Platform</label><input class="form-control" id="f-ct-platform" placeholder="Facebook + Instagram"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Due Label</label><input class="form-control" id="f-ct-due" placeholder="e.g. Due today"></div>
+      <div class="form-group"><label class="form-label">Urgency</label><select class="form-control" id="f-ct-urgency"><option value="red">High</option><option value="amber">Medium</option><option value="gray" selected>Normal</option></select></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveContent()">Submit for Approval</button>`);
+}
+async function saveContent(){
+  const title=document.getElementById('f-ct-title').value.trim();
+  if(!title){toast('Please enter content title.','error');return;}
+  const vaParts=(document.getElementById('f-ct-va').value||'').split('|');
+  try{
+    await addDoc('content',{title,status:'pending',vaUid:vaParts[0]||'',vaName:vaParts[1]||'',vaInitials:vaParts[2]||'',vaColor:vaParts[3]||'navy',platform:document.getElementById('f-ct-platform').value||'Various',dueLabel:document.getElementById('f-ct-due').value||'—',urgency:document.getElementById('f-ct-urgency').value});
+    closeModal(); toast('Submitted for approval!','success');
+  } catch(e){toast('Error.','error');console.error(e);}
+}
+
+function openAddInvoice(){
+  const clientOptions=APP.data.clients.map(c=>`<option>${c.name}</option>`).join('');
+  const invNum=`INV-${new Date().getFullYear()}-${String(APP.data.invoices.length+1).padStart(3,'0')}`;
+  openModal('New Invoice',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Invoice #</label><input class="form-control" id="f-inv-num" value="${invNum}"></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-inv-status"><option>Draft</option><option selected>Sent</option><option>Paid</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Client *</label><select class="form-control" id="f-inv-client">${clientOptions}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Amount (₱) *</label><input type="number" class="form-control" id="f-inv-amount" placeholder="25000"></div>
+      <div class="form-group"><label class="form-label">Due Date</label><input type="date" class="form-control" id="f-inv-due"></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveInvoice()">Create Invoice</button>`);
+}
+async function saveInvoice(){
+  const amount=parseInt(document.getElementById('f-inv-amount').value);
+  if(!amount){toast('Please enter an amount.','error');return;}
+  try{
+    await addDoc('invoices',{number:document.getElementById('f-inv-num').value,client:document.getElementById('f-inv-client').value,amount,status:document.getElementById('f-inv-status').value,issuedDate:today(),dueDate:document.getElementById('f-inv-due').value,paidAt:null});
+    closeModal(); toast('Invoice created!','success');
+  } catch(e){toast('Error.','error');}
+}
+
+function openAddGoal(){
+  openModal('Add Goal',`
+    <div class="form-group"><label class="form-label">Goal Name *</label><input class="form-control" id="f-g-name" placeholder="e.g. Reach ₱500,000 MRR"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Category</label><select class="form-control" id="f-g-cat"><option>Revenue</option><option>Clients</option><option>Team</option><option>Marketing</option><option>Operations</option></select></div>
+      <div class="form-group"><label class="form-label">Quarter</label><select class="form-control" id="f-g-q"><option>Q1</option><option selected>Q2</option><option>Q3</option><option>Q4</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Target Value *</label><input type="number" class="form-control" id="f-g-target" placeholder="e.g. 10"></div>
+      <div class="form-group"><label class="form-label">Current Value</label><input type="number" class="form-control" id="f-g-current" placeholder="0"></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveGoal()">Add Goal</button>`);
+}
+async function saveGoal(){
+  const name=document.getElementById('f-g-name').value.trim();
+  if(!name){toast('Please enter a goal name.','error');return;}
+  try{
+    await addDoc('goals',{name,category:document.getElementById('f-g-cat').value,quarter:document.getElementById('f-g-q').value,year:new Date().getFullYear(),target:parseInt(document.getElementById('f-g-target').value)||100,current:parseInt(document.getElementById('f-g-current').value)||0,status:'In Progress'});
+    closeModal(); toast('Goal added!','success');
+  } catch(e){toast('Error.','error');}
+}
+
+function openUpdateGoal(id){
+  const g=APP.data.goals.find(x=>x.id===id);
+  if(!g) return;
+  openModal(`Update: ${g.name}`,`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Current Value</label><input type="number" class="form-control" id="f-ug-current" value="${g.current||0}"></div>
+      <div class="form-group"><label class="form-label">Target Value</label><input type="number" class="form-control" id="f-ug-target" value="${g.target||100}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-ug-status">${['On Track','At Risk','In Progress','Achieved'].map(s=>`<option${s===g.status?' selected':''}>${s}</option>`).join('')}</select></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveGoalUpdate('${id}')">Save</button>`);
+}
+async function saveGoalUpdate(id){
+  try{
+    await updateDoc('goals',id,{current:parseInt(document.getElementById('f-ug-current').value)||0,target:parseInt(document.getElementById('f-ug-target').value)||100,status:document.getElementById('f-ug-status').value});
+    closeModal(); toast('Goal updated!','success');
+  } catch(e){toast('Error.','error');}
+}
+
+function openInviteUser(){
+  openModal('Add Team Member',`
+    <div class="form-group"><label class="form-label">Email Address *</label><input type="email" class="form-control" id="f-inv-email" placeholder="va@thejobscollective.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" id="f-inv-dname" placeholder="e.g. Maria Reyes"></div>
+      <div class="form-group"><label class="form-label">Role</label><select class="form-control" id="f-inv-role"><option value="va">Virtual Assistant</option><option value="client">Client</option></select></div>
+    </div>
+    <div style="padding:10px;background:var(--navy-pale);border-radius:var(--r);font-size:11px;color:var(--navy)">ℹ Demo mode — in production, Firebase sends an invite email with login credentials.</div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="createUser()">Add Member</button>`);
+}
+async function createUser(){
+  const email=document.getElementById('f-inv-email').value.trim();
+  const name=document.getElementById('f-inv-dname').value.trim();
+  const role=document.getElementById('f-inv-role').value;
+  if(!email){toast('Email required.','error');return;}
+  const initials=(name||email).split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()||'?';
+  const id='u'+Date.now();
+  const colors=['teal','gold','red','green','navy'];
+  const color=colors[APP.data.team.length%colors.length];
+  await setDoc('users',id,{email,displayName:name||email.split('@')[0],role,initials,avatarColor:color,capacity:0,status:'Active',skills:[]});
+  APP.data.team=lsLoad('team');
+  closeModal(); toast(`Account created for ${name||email}!`,'success');
+}
+
+function openAddDeliverable(clientId){
+  openModal('Add Deliverable',`
+    <div class="form-group"><label class="form-label">Name *</label><input class="form-control" id="f-d-name" placeholder="e.g. April Social Media Report"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type</label><select class="form-control" id="f-d-type"><option>Report</option><option>Design</option><option>Copy</option><option>Video</option><option>Presentation</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-d-status"><option>Draft</option><option>Pending</option><option selected>Approved</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control" id="f-d-date" value="${today()}"></div>
+      <div class="form-group"><label class="form-label">File URL</label><input class="form-control" id="f-d-url" placeholder="https://drive.google.com/…"></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveDeliverable('${clientId}')">Add</button>`);
+}
+async function saveDeliverable(clientId){
+  const name=document.getElementById('f-d-name').value.trim();
+  if(!name){toast('Please enter a name.','error');return;}
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const deliverables=[...(c.deliverables||[]),{name,type:document.getElementById('f-d-type').value,status:document.getElementById('f-d-status').value,date:document.getElementById('f-d-date').value,url:document.getElementById('f-d-url').value}];
+  try{ await updateDoc('clients',clientId,{deliverables}); closeModal(); toast('Deliverable added!','success'); }
+  catch(e){toast('Error.','error');}
+}
+
+function openAddTool(clientId){
+  openModal('Add Tool / Access',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tool Name *</label><input class="form-control" id="f-tl-name" placeholder="e.g. Meta Business Suite"></div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="form-control" id="f-tl-emoji" placeholder="🔧" maxlength="2"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Username / Login</label><input class="form-control" id="f-tl-user" placeholder="email or username"></div>
+      <div class="form-group"><label class="form-label">Access Status</label><select class="form-control" id="f-tl-access"><option value="true">Have Access</option><option value="false">No Access Yet</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input class="form-control" id="f-tl-note" placeholder="e.g. Admin access, 2FA with Justine"></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTool('${clientId}')">Add</button>`);
+}
+async function saveTool(clientId){
+  const name=document.getElementById('f-tl-name').value.trim();
+  if(!name){toast('Please enter a tool name.','error');return;}
+  const c=APP.data.clients.find(x=>x.id===clientId);
+  const tools=[...(c.tools||[]),{name,emoji:document.getElementById('f-tl-emoji').value||'🔧',username:document.getElementById('f-tl-user').value,hasAccess:document.getElementById('f-tl-access').value==='true',note:document.getElementById('f-tl-note').value}];
+  try{ await updateDoc('clients',clientId,{tools}); closeModal(); toast('Tool added!','success'); }
+  catch(e){toast('Error.','error');}
+}
+
+function openAddTaskForClient(clientName){
+  openAddTask();
+  setTimeout(()=>{const el=document.getElementById('f-task-proj');if(el)el.value=clientName;},100);
+}
+
+/* ──────────────────────────────────────────────────────────
+   MODAL HELPERS
+────────────────────────────────────────────────────────── */
+function openModal(title,body,foot){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-foot').innerHTML=foot;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+/* ──────────────────────────────────────────────────────────
+   TOAST
+────────────────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg,type='success'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.className='toast',3500);
+}
+
+/* ──────────────────────────────────────────────────────────
+   UI HELPERS
+────────────────────────────────────────────────────────── */
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sb-overlay').classList.toggle('show'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sb-overlay').classList.remove('show'); }
+
+function toggleSOP(i){
+  const body=document.getElementById('sop-'+i);
+  const arr=document.getElementById('sop-arr-'+i);
+  if(!body) return;
+  const open=!body.classList.contains('open');
+  body.classList.toggle('open',open);
+  if(arr) arr.style.transform=open?'rotate(180deg)':'';
+}
+
+function bindPageEvents(){
+  // Nothing extra — all handlers are inline
+}
+
+/* ──────────────────────────────────────────────────────────
+   KEYBOARD SHORTCUTS
+────────────────────────────────────────────────────────── */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeModal();
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){ e.preventDefault(); openQuickAdd(); }
+});
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TJC Business OS — The Jobs Collective</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════
    TJC BUSINESS OS — v3.0 UPGRADED
