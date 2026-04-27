@@ -762,12 +762,12 @@ const CAP = {
   nearLimit(){ return APP.data.team.filter(v=>v.role==='va'&&(v.capacity||0)>=CFG.capacityWarn&&(v.capacity||0)<CFG.capacityMax); }
 };
 
-/* ──────────────────────────────────────────────────────────
-   SECTION 8 — KPI ENGINE
-────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   KPI ENGINE (FULLY FIXED)
+───────────────────────────────────────── */
 const KPI = {
   score(va){
-    if(!va?.kpi) return 0;
+    if(!va || !va.kpi) return 0;
 
     const {
       completionRate = 0,
@@ -789,17 +789,15 @@ const KPI = {
     if(score >= 75) return 'Cornerstone';
     if(score >= 60) return 'Waypoint';
     return 'At Risk';
-  }
-};
+  },
 
   tierClass(score){
     if(score >= 90) return 'tier-vanguard';
     if(score >= 75) return 'tier-cornerstone';
     if(score >= 60) return 'tier-waypoint';
-    return 'tier-waypoint';
-  }
-};
-      
+    return 't-red';
+  },
+
   tierColor(score){
     if(score >= 90) return 'var(--gold)';
     if(score >= 75) return 'var(--teal)';
@@ -808,6 +806,19 @@ const KPI = {
   }
 };
 
+/* ─────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────── */
+function toggleSidebar(){
+  document.getElementById('sidebar')?.classList.toggle('open');
+  document.getElementById('sb-overlay')?.classList.toggle('show');
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('sb-overlay')?.classList.remove('show');
+}
+});
 /* ──────────────────────────────────────────────────────────
    SECTION 10 — HEALTH SCORE ENGINE
 ────────────────────────────────────────────────────────── */
@@ -3527,9 +3538,6 @@ function resetData(){
   closeModal(); location.reload();
 }
  
-/* ──────────────────────────────────────────────────────────
-   SECTION 33 — KEYBOARD SHORTCUTS
-────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   loadAllData();
 
