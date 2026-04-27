@@ -28,7 +28,7 @@
   --font:'Outfit',system-ui,sans-serif;
   --sb:204px;
 }
-html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:auto}
+html,body{height:100%;font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden}
 .hidden{display:none!important}
 
 /* ── APP SHELL ───────────────────────────────────────── */
@@ -765,6 +765,9 @@ const CAP = {
 /* ─────────────────────────────────────────
    KPI ENGINE (FULLY FIXED)
 ───────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   KPI ENGINE (FULLY FIXED)
+───────────────────────────────────────── */
 const KPI = {
   score(va){
     if(!va || !va.kpi) return 0;
@@ -803,6 +806,33 @@ const KPI = {
     if(score >= 75) return 'var(--teal)';
     if(score >= 60) return 'var(--navy)';
     return 'var(--red)';
+  }
+}; // ✅ CLOSE KPI PROPERLY
+
+
+/* ─────────────────────────────────────────
+   SLA ENGINE
+───────────────────────────────────────── */
+const SLA = {
+  hours(){ return CFG.slaHours; },
+
+  getDeadline(task){
+    if(!task?.createdAt) return null;
+    return new Date(new Date(task.createdAt).getTime() + this.hours() * 3600000);
+  },
+
+  status(task){
+    if(task.firstResponseAt) return 'ok';
+
+    const deadline = this.getDeadline(task);
+    if(!deadline) return 'ok';
+
+    const now = new Date();
+
+    if(now > deadline) return 'breach';
+    if((deadline - now) < 3600000) return 'warn';
+
+    return 'ok';
   }
 };
 
@@ -3537,15 +3567,4 @@ function resetData(){
   ['tasks','clients','timelogs','content','invoices','goals','team','events','activities','config'].forEach(col=>localStorage.removeItem(lsKey(col)));
   closeModal(); location.reload();
 }
- 
-document.addEventListener('DOMContentLoaded', () => {
-  loadAllData();
-
-  APP.profile = APP.data.team.find(u => u.id === APP.user.uid) 
-    || APP.data.team[0];
-
-  renderCurrentPage();
-  updateSbBadges();
-});
-
 </script>
