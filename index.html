@@ -420,12 +420,13 @@ select.form-control{cursor:pointer}
         <div class="sb-fx-row">
           <div class="sb-fx-val" id="sb-fx-val">$1 = ₱56.50</div>
           <div class="sb-fx-sub"></div>
-          <button class="sb-fx-edit" onclick="editExchangeRate()" title="Edit rate">✎</button>
+          <button class="sb-fx-edit" onclick="fetchLiveExchangeRate()" title="Fetch live rate" style="font-size:13px">🔄</button>
+          <button class="sb-fx-edit" onclick="editExchangeRate()" title="Edit rate manually">✎</button>
         </div>
       </div>
-      <div class="sb-verse">
-        <div class="sb-verse-ref">✦ This week's scripture</div>
-        <div class="sb-verse-text">"Whatever you do, work at it with all your heart, as working for the Lord." — Col. 3:23</div>
+      <div class="sb-verse" id="sb-verse-block">
+        <div class="sb-verse-ref">✦ Today's scripture</div>
+        <div class="sb-verse-text" id="sb-verse-text">"Whatever you do, work at it with all your heart, as working for the Lord." — Col. 3:23</div>
       </div>
       <div class="sb-user" onclick="confirmSignOut()" id="sb-user-row">
         <div class="av av-sm av-navy" id="sb-av">JB</div>
@@ -1530,14 +1531,22 @@ function renderContent(){
   const now = new Date();
   const dateFrom = new Date(now.getFullYear(), now.getMonth()-6, 1).toISOString().split('T')[0];
   const dateTo = new Date(now.getFullYear(), now.getMonth()+2, 0).toISOString().split('T')[0];
-  const platformIcons = {'Facebook':'🟦','Instagram':'🟣','LinkedIn':'🔷','Twitter':'🐦','TikTok':'⬛'};
+  const platformIcons = {'Facebook':'🟦','Instagram':'📸','LinkedIn':'🔷','Twitter':'🐦','TikTok':'🎵','Threads':'🧵','Google Business':'📍','YouTube':'▶️','Pinterest':'📌'};
+  const spFilter = APP.spFilter||'all';
+  const filteredContent = spFilter==='all' ? allContent : allContent.filter(c=>c.platform&&c.platform.toLowerCase().includes(spFilter.toLowerCase().split(' /')[0].trim()));
   return `
   <div class="sp-header">
-    <div class="sp-platform-filter">
-      <div class="sp-platform-btn on">All Platforms</div>
-      <div class="sp-platform-btn">🟦 Facebook</div>
-      <div class="sp-platform-btn">🟣 Instagram</div>
-      <div class="sp-platform-btn">🔷 LinkedIn</div>
+    <div class="sp-platform-filter" id="sp-filter" style="flex-wrap:wrap;gap:5px">
+      <div class="sp-platform-btn on" onclick="filterSocialPlan(this,'all')">All</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Facebook')">🟦 Facebook</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Instagram')">📸 Instagram</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'LinkedIn')">🔷 LinkedIn</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'TikTok')">🎵 TikTok</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Threads')">🧵 Threads</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Twitter')">🐦 Twitter / X</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Google Business')">📍 Google Business</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'YouTube')">▶️ YouTube</div>
+      <div class="sp-platform-btn" onclick="filterSocialPlan(this,'Pinterest')">📌 Pinterest</div>
     </div>
     <div class="sp-date-range">📅 ${dateFrom} → ${dateTo}</div>
     <div class="sp-view-toggle" style="margin-left:auto">
@@ -1560,8 +1569,8 @@ function renderContent(){
       <div style="flex:1">Due Date</div>
       <div style="flex:1">Assigned VA</div>
     </div>
-    ${allContent.length ? allContent.map(c=>{
-      const platIcon = c.platform&&c.platform.includes('Instagram')?'🟣':c.platform&&c.platform.includes('LinkedIn')?'🔷':'🟦';
+    ${filteredContent.length ? filteredContent.map(c=>{
+      const platIcon = c.platform&&c.platform.includes('TikTok')?'🎵':c.platform&&c.platform.includes('Threads')?'🧵':c.platform&&c.platform.includes('Twitter')?'🐦':c.platform&&c.platform.includes('Instagram')?'📸':c.platform&&c.platform.includes('LinkedIn')?'🔷':c.platform&&c.platform.includes('Google')?'📍':c.platform&&c.platform.includes('YouTube')?'▶️':c.platform&&c.platform.includes('Pinterest')?'📌':'🟦';
       const statusTag2 = c.status==='pending'?'t-red':c.status==='approved'?'t-green':'t-amber';
       return `<div class="sp-content-row" onclick="${c.status==='pending'?`openApprovalDetail('${c.id}')`:'void(0)'}">
         <div class="sp-platform-icon" style="background:${c.status==='pending'?'var(--red-pale)':c.status==='approved'?'var(--green-pale)':'var(--amber-pale)'}">${platIcon}</div>
@@ -1744,7 +1753,22 @@ function renderCPDetail(){
     notes: renderCPNotes(c),
     access: renderCPAccess(c),
   };
-  return `<div style="max-width:960px;margin:0 auto"><div style="margin-bottom:14px"><button class="btn btn-sm btn-secondary" onclick="APP.cp.clientId=null;renderCurrentPage()">← All Clients</button></div><div class="cp-hero"><div style="position:relative;z-index:1"><div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:2px">${c.package} Package · ${c.assignedVa}</div><div class="cp-hero-name">${c.name}</div><div class="cp-hero-sub">$${c.rateUsd}/mo = ₱${FIN.toPhp(c.rateUsd).toLocaleString()}/mo · Contract: ${c.contractEnd||'Ongoing'}</div><div class="cp-hero-tags"><span class="cp-hero-tag">${c.status}</span><span class="cp-hero-tag">${c.priority} Priority</span>${FIN.marginBadge(margin)}${c.contractEnd&&new Date(c.contractEnd)<new Date(Date.now()+30*86400000)?`<span class="cp-hero-tag" style="background:rgba(201,168,76,.3)">⚠ Renewal Soon</span>`:''}${c.oosCount?`<span class="oos-badge cp-hero-tag">${c.oosCount} OOS Tasks · $${c.oosValue||0} upsell</span>`:''}</div></div><div class="cp-hero-health"><div class="cp-hero-health-val">${h}</div><div class="cp-hero-health-lbl">Health Score</div>${HEALTH.riskTag(h)}</div></div><div class="cp-tabs" style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto;margin-bottom:16px">${[['overview','📊 Overview'],['contacts','👤 Contacts'],['tasks','✅ Tasks'],['finance','💰 Finance'],['deliverables','📦 Deliverables'],['reports','📈 Reports'],['notes','📝 Notes'],['access','🔑 Access']].map(([t,l])=>`<div class="cptab ptab${APP.cp.tab===t?' on':''}" onclick="APP.cp.tab='${t}';renderCurrentPage()">${l}</div>`).join('')}</div><div>${tabs[APP.cp.tab]||''}</div></div>`;
+  return `<div style="max-width:960px;margin:0 auto"><div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><button class="btn btn-sm btn-secondary" onclick="APP.cp.clientId=null;renderCurrentPage()">← All Clients</button><button class="btn btn-sm btn-secondary" onclick="openEditClient('${c.id}')">✎ Edit</button><button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">🗑 Delete</button></div><div class="cp-hero"><div style="position:relative;z-index:1"><div style="font-size:11px;color:rgba(255,255,255,.55);margin-bottom:2px">${c.package} Package · ${c.assignedVa}</div><div class="cp-hero-name">${c.name}</div><div class="cp-hero-sub">$${c.rateUsd}/mo = ₱${FIN.toPhp(c.rateUsd).toLocaleString()}/mo · Contract: ${c.contractEnd||'Ongoing'}</div><div class="cp-hero-tags"><span class="cp-hero-tag">${c.status}</span><span class="cp-hero-tag">${c.priority} Priority</span>${FIN.marginBadge(margin)}${c.contractEnd&&new Date(c.contractEnd)<new Date(Date.now()+30*86400000)?`<span class="cp-hero-tag" style="background:rgba(201,168,76,.3)">⚠ Renewal Soon</span>`:''}${c.oosCount?`<span class="oos-badge cp-hero-tag">${c.oosCount} OOS Tasks · $${c.oosValue||0} upsell</span>`:''}</div></div><div class="cp-hero-health"><div class="cp-hero-health-val">${h}</div><div class="cp-hero-health-lbl">Health Score</div>${HEALTH.riskTag(h)}</div></div><div class="cp-tabs" style="display:flex;border-bottom:1px solid var(--border);overflow-x:auto;margin-bottom:16px">${[['overview','📊 Overview'],['contacts','👤 Contacts'],['tasks','✅ Tasks'],['finance','💰 Finance'],['deliverables','📦 Deliverables'],['reports','📈 Reports'],['notes','📝 Notes'],['access','🔑 Access']].map(([t,l])=>`<div class="cptab ptab${APP.cp.tab===t?' on':''}" onclick="APP.cp.tab='${t}';renderCurrentPage()">${l}</div>`).join('')}</div><div>${tabs[APP.cp.tab]||''}</div></div>`;
+}
+
+function openEditClient(id){
+  const c=APP.data.clients.find(x=>x.id===id);
+  if(!c) return;
+  openModal('Edit Client',`<div class="form-group"><label class="form-label">Client / Company Name *</label><input class="form-control" id="f-ec-name" value="${c.name}"></div><div class="form-row"><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-ec-status">${['Lead','Proposal','Onboarding','Active','Completed'].map(s=>`<option${s===c.status?' selected':''}>${s}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Package</label><select class="form-control" id="f-ec-pkg">${['Starter','Growth','Premium','Custom'].map(s=>`<option${s===c.package?' selected':''}>${s}</option>`).join('')}</select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Monthly Rate (USD)</label><input type="number" class="form-control" id="f-ec-rate" value="${c.rateUsd||0}"></div><div class="form-group"><label class="form-label">VA Cost (PHP/mo)</label><input type="number" class="form-control" id="f-ec-cost" value="${c.vaCostPhp||0}"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Assigned VA</label><select class="form-control" id="f-ec-va">${APP.data.team.map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}"${v.id===c.assignedVaUid?' selected':''}>${v.displayName}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Priority</label><select class="form-control" id="f-ec-priority">${['High','Medium','Low'].map(s=>`<option${s===c.priority?' selected':''}>${s}</option>`).join('')}</select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Contract End Date</label><input type="date" class="form-control" id="f-ec-end" value="${c.contractEnd||''}"></div><div class="form-group"><label class="form-label">Time Zone</label><input class="form-control" id="f-ec-tz" value="${c.timezone||'PHT (UTC+8)'}"></div></div>`,`<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-danger btn-sm" onclick="deleteClient('${id}')">🗑 Delete</button><button class="btn btn-primary" onclick="saveEditClient('${id}')">Save Changes</button>`);
+}
+
+async function saveEditClient(id){
+  const name=document.getElementById('f-ec-name').value.trim();
+  if(!name){ toast('Client name required.','error'); return; }
+  const va=document.getElementById('f-ec-va').value.split('|');
+  await updateDoc('clients',id,{name,status:document.getElementById('f-ec-status').value,package:document.getElementById('f-ec-pkg').value,rateUsd:parseInt(document.getElementById('f-ec-rate').value)||0,vaCostPhp:parseInt(document.getElementById('f-ec-cost').value)||0,assignedVaUid:va[0],assignedVa:va[1],assignedVaInitials:va[2],assignedVaColor:va[3],priority:document.getElementById('f-ec-priority').value,contractEnd:document.getElementById('f-ec-end').value,timezone:document.getElementById('f-ec-tz').value,_actAction:'updated client',_actIcon:'✏️',_actColor:'navy',_actRecord:name});
+  closeModal();
+  toast('Client updated!','success');
 }
 
 function renderCPOverview(c,h,margin,ms,myTasks,myInvs,totalBilledUsd,totalPaidUsd){
@@ -1846,6 +1870,27 @@ function resetData(){
   ['tasks','clients','timelogs','content','invoices','goals','team','events','activities','config'].forEach(col=>localStorage.removeItem(lsKey(col)));
   closeModal();
   location.reload();
+}
+
+async function fetchLiveExchangeRate(){
+  try{
+    const el=document.getElementById('sb-fx-val');
+    if(el) el.textContent='$1 = ₱ …';
+    const res=await fetch('https://api.frankfurter.app/latest?from=USD&to=PHP');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    const rate=data.rates&&data.rates.PHP;
+    if(!rate) throw new Error('No PHP rate');
+    CFG.exchangeRate=parseFloat(rate.toFixed(2));
+    saveConfig();
+    updateExchangeRateDisplay();
+    if(el) el.style.color='#4ade80';
+    setTimeout(()=>{ if(el) el.style.color=''; },1500);
+    toast('Exchange rate updated: $1 = ₱'+CFG.exchangeRate.toFixed(2),'success');
+  }catch(err){
+    toast('Could not fetch live rate. Using saved rate.','warning');
+    updateExchangeRateDisplay();
+  }
 }
 
 function editExchangeRate(){
@@ -1987,8 +2032,16 @@ async function openInvoiceDetail(id){
   openModal(inv.number,`<div class="info-grid"><div class="info-box"><div class="info-label">Client</div><div class="info-val">${inv.client}</div></div><div class="info-box"><div class="info-label">Status</div><div class="info-val"><span class="tag ${invoiceTag(inv.status)}">${inv.status}</span></div></div><div class="info-box"><div class="info-label">Amount (USD)</div><div class="info-val currency-usd" style="font-size:18px">$${inv.amountUsd.toLocaleString()}</div></div><div class="info-box"><div class="info-label">Amount (PHP)</div><div class="info-val currency-php">₱${FIN.toPhp(inv.amountUsd).toLocaleString()}</div></div><div class="info-box"><div class="info-label">Issued</div><div class="info-val">${inv.issuedDate||'—'}</div></div><div class="info-box"><div class="info-label">Due Date</div><div class="info-val">${inv.dueDate||'—'}</div></div>${inv.paidAt?`<div class="info-box"><div class="info-label">Paid On</div><div class="info-val" style="color:var(--green);font-weight:600">${inv.paidAt}</div></div>`:''}</div>`,`${inv.status!=='Paid'?`<button class="btn btn-primary" onclick="markPaid('${inv.id}');closeModal()">Mark as Paid</button>`:''}<button class="btn btn-secondary" onclick="closeModal()">Close</button><button class="btn btn-danger" onclick="archiveDoc('invoices','${inv.id}','${inv.number}');closeModal()">🗃 Archive</button>`);
 }
 
+function filterSocialPlan(el, platform){
+  APP.spFilter = platform;
+  document.querySelectorAll('#sp-filter .sp-platform-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderCurrentPage();
+}
+
 function openAddContent(){
-  openModal('Submit Content for Approval',`<div class="form-group"><label class="form-label">Content Title *</label><input class="form-control" id="f-ct-title" placeholder="e.g. BrandX — May Week 1 Carousel"></div><div class="form-row"><div class="form-group"><label class="form-label">Assigned VA</label><select class="form-control" id="f-ct-va">${APP.data.team.filter(v=>v.role==='va').map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}">${v.displayName}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Platform</label><input class="form-control" id="f-ct-platform" placeholder="Facebook + Instagram"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Due Label</label><input class="form-control" id="f-ct-due" placeholder="e.g. Due today, Apr 30"></div><div class="form-group"><label class="form-label">Urgency</label><select class="form-control" id="f-ct-urgency"><option value="red">High (Red)</option><option value="amber">Medium (Amber)</option><option value="gray" selected>Normal</option></select></div></div>`,'<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveContent()">Submit for Approval</button>');
+  const platforms=['Facebook','Instagram','LinkedIn','TikTok','Threads','Twitter / X','Google Business','YouTube','Pinterest','Facebook + Instagram','Instagram + Facebook'];
+  openModal('New Social Post',`<div class="form-group"><label class="form-label">Post Title / Caption *</label><input class="form-control" id="f-ct-title" placeholder="e.g. BrandX — May Week 1 Carousel"></div><div class="form-row"><div class="form-group"><label class="form-label">Platform(s)</label><select class="form-control" id="f-ct-platform"><option value="">— Select Platform —</option>${platforms.map(p=>`<option>${p}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Assigned VA</label><select class="form-control" id="f-ct-va">${APP.data.team.filter(v=>v.role==='va'||v.role==='ops_va').map(v=>`<option value="${v.id}|${v.displayName}|${v.initials}|${v.avatarColor}">${v.displayName}</option>`).join('')}</select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Client</label><select class="form-control" id="f-ct-client"><option value="">— Any —</option>${APP.data.clients.filter(c=>c.status==='Active').map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Urgency</label><select class="form-control" id="f-ct-urgency"><option value="red">🔴 High</option><option value="amber">🟡 Medium</option><option value="gray" selected>⚪ Normal</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Due / Schedule Label</label><input class="form-control" id="f-ct-due" placeholder="e.g. May 15, Due today"></div><div class="form-group"><label class="form-label">Post Type</label><select class="form-control" id="f-ct-type"><option>Post</option><option>Reel</option><option>Carousel</option><option>Story</option><option>Video</option><option>Article</option></select></div></div>`,`<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveContent()">+ Add Post</button>`);
 }
 
 async function saveContent(){
@@ -2062,11 +2115,39 @@ async function saveVA(){
   toast(name + ' added to the team!','success');
 }
 
+function deleteClient(id){
+  const c=APP.data.clients.find(x=>x.id===id);
+  if(!c) return;
+  if(!confirm(`Permanently delete "${c.name}"? This cannot be undone.`)) return;
+  APP.data.clients=APP.data.clients.filter(x=>x.id!==id);
+  lsSave('clients',APP.data.clients);
+  logActivity('🗑️','deleted client','clients',c.name,'red');
+  closeModal();
+  if(APP.page==='clientportal'){ APP.cp.clientId=null; navigate('clients'); }
+  else { renderCurrentPage(); updateSbBadges(); }
+  toast(c.name+' deleted.','warning');
+}
+
+function deleteVA(id){
+  const va=APP.data.team.find(x=>x.id===id);
+  if(!va) return;
+  if(va.role==='owner'){ toast('Cannot delete the owner account.','error'); return; }
+  if(!confirm(`Permanently delete "${va.displayName}"? This cannot be undone.`)) return;
+  APP.data.team=APP.data.team.filter(x=>x.id!==id);
+  lsSave('team',APP.data.team);
+  logActivity('🗑️','removed team member','team',va.displayName,'red');
+  closeModal();
+  renderCurrentPage();
+  updateSbBadges();
+  toast(va.displayName+' removed.','warning');
+}
+
 function openVADetail(id){
   const va=APP.data.team.find(x=>x.id===id);
   if(!va) return;
   const score=KPI.score(va);
-  openModal(va.displayName,`<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="av av-lg ${avColor(va.avatarColor)}">${va.initials}</div><div><div style="font-size:15px;font-weight:600">${va.displayName}</div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">${va.role==='owner'?'Founder & Owner':'Virtual Assistant'}</div><span class="${KPI.tierClass(score)}">${KPI.tier(score)}</span> <span style="font-size:13px;font-weight:700;color:${KPI.tierColor(score)}"> ${score}/100</span></div></div><div class="form-group"><label class="form-label">Capacity % (Drag to update)</label><input type="range" class="form-control" id="f-vd-cap" min="0" max="100" value="${va.capacity||0}" oninput="document.getElementById('vd-cap-val').textContent=this.value+'%'"><span id="vd-cap-val" style="font-size:13px;font-weight:600;color:${CAP.textColor(va.capacity||0)}">${va.capacity||0}%</span></div><div class="form-row"><div class="form-group"><label class="form-label">Active Clients</label><input type="number" class="form-control" id="f-vd-clients" value="${va.clients||va.clientCount||0}" min="0"></div><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-vd-status">${['Active','On Leave','Part-Time','Offboarded'].map(s=>`<option${s===va.status?' selected':''}>${s}</option>`).join('')}</select></div></div>`,'<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateVA(\''+id+'\')">Save</button>');
+  const deleteBtn=va.role!=='owner'?`<button class="btn btn-danger btn-sm" onclick="deleteVA('${id}')">🗑 Delete</button>`:'';
+  openModal(va.displayName,`<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="av av-lg ${avColor(va.avatarColor)}">${va.initials}</div><div><div style="font-size:15px;font-weight:600">${va.displayName}</div><div style="font-size:11px;color:var(--text3);margin-bottom:4px">${va.role==='owner'?'Founder & Owner':'Virtual Assistant'}</div><span class="${KPI.tierClass(score)}">${KPI.tier(score)}</span> <span style="font-size:13px;font-weight:700;color:${KPI.tierColor(score)}"> ${score}/100</span></div></div><div class="form-group"><label class="form-label">Capacity % (Drag to update)</label><input type="range" class="form-control" id="f-vd-cap" min="0" max="100" value="${va.capacity||0}" oninput="document.getElementById('vd-cap-val').textContent=this.value+'%'"><span id="vd-cap-val" style="font-size:13px;font-weight:600;color:${CAP.textColor(va.capacity||0)}">${va.capacity||0}%</span></div><div class="form-row"><div class="form-group"><label class="form-label">Active Clients</label><input type="number" class="form-control" id="f-vd-clients" value="${va.clients||va.clientCount||0}" min="0"></div><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="f-vd-status">${['Active','On Leave','Part-Time','Offboarded'].map(s=>`<option${s===va.status?' selected':''}>${s}</option>`).join('')}</select></div></div>`,`<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>${deleteBtn}<button class="btn btn-primary" onclick="updateVA('${id}')">Save</button>`);
 }
 
 async function updateVA(id){
@@ -2896,25 +2977,30 @@ function renderConversations(){
   const convs = APP.data.conversations || [];
   const activeId = APP.convActive || (convs[0]&&convs[0].id);
   const active = convs.find(c=>c.id===activeId) || convs[0];
-  if(!convs.length){
-    return `<div class="card" style="padding:48px;text-align:center;color:var(--text3)">
-      <div style="font-size:40px;margin-bottom:12px">💬</div>
-      <div style="font-size:15px;font-weight:600;margin-bottom:6px">No conversations yet</div>
-      <div style="font-size:12px">Conversations with clients and contacts will appear here.</div>
-    </div>`;
-  }
-  return `<div class="conv-layout">
+  const totalUnread = convs.reduce((a,c)=>a+(c.unread||0),0);
+  const emptyInbox = `<div style="padding:48px;text-align:center;color:var(--text3)">
+    <div style="font-size:40px;margin-bottom:12px">💬</div>
+    <div style="font-size:15px;font-weight:600;margin-bottom:6px">No conversations yet</div>
+    <div style="font-size:12px;margin-bottom:16px">Start a new conversation to connect with clients and contacts.</div>
+    <button class="btn btn-primary" onclick="openNewConversation()">+ New Conversation</button>
+  </div>`;
+  if(!convs.length) return `<div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-primary" onclick="openNewConversation()">+ New Conversation</button></div><div class="card">${emptyInbox}</div>`;
+  return `
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+    <button class="btn btn-primary btn-sm" onclick="openNewConversation()">+ New Conversation</button>
+  </div>
+  <div class="conv-layout">
     <div class="conv-list">
       <div class="conv-list-head">
         Team Inbox
-        <span class="tag t-navy">${convs.reduce((a,c)=>a+(c.unread||0),0)} unread</span>
+        ${totalUnread>0?`<span class="tag t-red">${totalUnread} unread</span>`:'<span class="tag t-teal">All read</span>'}
       </div>
       ${convs.map(c=>`
-      <div class="conv-thread${c.id===activeId?' on':''}" onclick="selectConv('${c.id}')">
+      <div class="conv-thread${c.id===activeId?' on':''}" onclick="selectConv('${c.id}')" style="position:relative">
         <div class="av av-sm ${avColor(c.contactColor||'navy')}">${c.contactInitials}</div>
         <div class="conv-thread-info">
           <div class="conv-thread-name">${c.contact}</div>
-          <div class="conv-thread-preview">${c.preview}</div>
+          <div class="conv-thread-preview">${c.preview||'No messages yet'}</div>
         </div>
         <div class="conv-thread-meta">
           <div class="conv-thread-date">${c.date}</div>
@@ -2922,47 +3008,51 @@ function renderConversations(){
         </div>
       </div>`).join('')}
     </div>
+    ${active ? `
     <div class="conv-main">
       <div class="conv-main-head">
         <div class="av av-md ${avColor(active.contactColor||'navy')}">${active.contactInitials}</div>
         <div>
           <div style="font-size:14px;font-weight:600">${active.contact}</div>
-          <div style="font-size:11px;color:var(--text3)">Client Contact</div>
+          <div style="font-size:11px;color:var(--text3)">${(active.messages||[]).length} messages</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:6px">
-          <button class="btn btn-sm btn-secondary">⭐</button>
-          <button class="btn btn-sm btn-secondary">📧</button>
-          <button class="btn btn-sm btn-secondary">🗑️</button>
+          <button class="btn btn-sm btn-secondary" onclick="openEditConversation('${active.id}')" title="Edit conversation">✎ Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteConversation('${active.id}')" title="Delete conversation">🗑</button>
         </div>
       </div>
-      <div class="conv-messages">
-        ${(active.messages||[]).map(m=>`
-        <div class="conv-msg ${m.from==='out'?'out':'in'}">
+      <div class="conv-messages" id="conv-messages-area">
+        ${(active.messages||[]).length===0?`<div style="text-align:center;color:var(--text3);padding:32px;font-size:13px">No messages yet. Say hello!</div>`:''}
+        ${(active.messages||[]).map((m,mi)=>`
+        <div class="conv-msg ${m.from==='out'?'out':'in'}" style="position:relative">
           ${m.from==='in'?`<div class="av av-sm ${avColor(active.contactColor||'navy')}">${active.contactInitials}</div>`:''}
           <div>
             <div class="conv-msg-bubble">${m.text}</div>
-            <div class="conv-msg-time">${m.time}</div>
+            <div class="conv-msg-time" style="display:flex;align-items:center;gap:6px">
+              ${m.time}
+              <button onclick="deleteConvMsg('${active.id}',${mi})" style="background:none;border:none;cursor:pointer;font-size:11px;color:var(--text3);opacity:0;transition:opacity .15s" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0" title="Delete message">✕</button>
+            </div>
           </div>
         </div>`).join('')}
       </div>
       <div class="conv-input-row">
-        <input class="conv-input" placeholder="Type a message..." id="conv-input-field">
+        <input class="conv-input" placeholder="Type a message..." id="conv-input-field" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendConvMsg('${active.id}')}">
         <button class="btn btn-primary btn-sm" onclick="sendConvMsg('${active.id}')">Send ↗</button>
       </div>
     </div>
     <div class="conv-sidebar">
       <div class="conv-sidebar-title">Contact Details</div>
-      <div class="av av-lg ${avColor(active.contactColor||'navy')}" style="margin:0 auto 10px;display:flex">${active.contactInitials}</div>
+      <div class="av av-lg ${avColor(active.contactColor||'navy')}" style="margin:0 auto 10px;display:flex;justify-content:center">${active.contactInitials}</div>
       <div style="text-align:center;font-size:13px;font-weight:600;margin-bottom:12px">${active.contact}</div>
-      <div class="conv-detail-row"><span class="conv-detail-label">Status</span><span class="conv-detail-val"><span class="tag t-teal">Active</span></span></div>
-      <div class="conv-detail-row"><span class="conv-detail-label">Owner</span><span class="conv-detail-val">Justine</span></div>
+      <div class="conv-detail-row"><span class="conv-detail-label">Messages</span><span class="conv-detail-val">${(active.messages||[]).length}</span></div>
       <div class="conv-detail-row"><span class="conv-detail-label">Unread</span><span class="conv-detail-val">${active.unread||0}</span></div>
+      <div class="conv-detail-row"><span class="conv-detail-label">Started</span><span class="conv-detail-val">${active.date||'—'}</span></div>
       <div style="margin-top:14px">
         <div class="conv-sidebar-title">Actions</div>
-        <button class="btn btn-secondary btn-sm w-full" style="margin-bottom:6px">Assign to VA</button>
-        <button class="btn btn-secondary btn-sm w-full">Add to Contacts</button>
+        <button class="btn btn-secondary btn-sm w-full" style="margin-bottom:6px" onclick="openEditConversation('${active.id}')">✎ Edit Contact</button>
+        <button class="btn btn-danger btn-sm w-full" onclick="deleteConversation('${active.id}')">🗑 Delete Thread</button>
       </div>
-    </div>
+    </div>` : `<div class="conv-main" style="align-items:center;justify-content:center;color:var(--text3)">Select a conversation</div>`}
   </div>`;
 }
 
@@ -2970,8 +3060,10 @@ function selectConv(id){
   APP.convActive = id;
   const conv = (APP.data.conversations||[]).find(c=>c.id===id);
   if(conv) conv.unread = 0;
+  lsSave('conversations', APP.data.conversations);
   renderCurrentPage();
   updateSbBadges();
+  setTimeout(()=>{ const el=document.getElementById('conv-messages-area'); if(el) el.scrollTop=el.scrollHeight; },50);
 }
 
 function sendConvMsg(convId){
@@ -2982,8 +3074,118 @@ function sendConvMsg(convId){
   conv.messages = conv.messages||[];
   conv.messages.push({from:'out',text:input.value.trim(),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
   conv.preview = input.value.trim();
+  conv.date = 'Today';
   input.value = '';
+  lsSave('conversations', APP.data.conversations);
   renderCurrentPage();
+  setTimeout(()=>{ const el=document.getElementById('conv-messages-area'); if(el) el.scrollTop=el.scrollHeight; },50);
+}
+
+function deleteConvMsg(convId, msgIndex){
+  const conv = (APP.data.conversations||[]).find(c=>c.id===convId);
+  if(!conv) return;
+  conv.messages.splice(msgIndex, 1);
+  conv.preview = conv.messages.length ? conv.messages[conv.messages.length-1].text : '';
+  lsSave('conversations', APP.data.conversations);
+  renderCurrentPage();
+}
+
+function openNewConversation(){
+  const colors = ['navy','teal','gold','red','green','purple'];
+  openModal('New Conversation',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contact Name *</label><input class="form-control" id="f-cv-name" placeholder="e.g. Maria Santos"></div>
+      <div class="form-group"><label class="form-label">Initials (auto)</label><input class="form-control" id="f-cv-initials" placeholder="MS" maxlength="2"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Avatar Color</label><select class="form-control" id="f-cv-color">${colors.map(c=>`<option value="${c}">${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">First Message (optional)</label><input class="form-control" id="f-cv-msg" placeholder="Hello! I wanted to reach out..."></div>
+    </div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveNewConversation()">Start Conversation</button>`
+  );
+}
+
+function saveNewConversation(){
+  const name = document.getElementById('f-cv-name').value.trim();
+  if(!name){ toast('Contact name required.','error'); return; }
+  const initials = (document.getElementById('f-cv-initials').value.trim() || name.split(' ').map(n=>n[0]).join('').slice(0,2)).toUpperCase();
+  const color = document.getElementById('f-cv-color').value;
+  const firstMsg = document.getElementById('f-cv-msg').value.trim();
+  const id = 'cv' + Date.now();
+  const messages = firstMsg ? [{from:'out',text:firstMsg,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}] : [];
+  const conv = {id,contact:name,contactInitials:initials,contactColor:color,preview:firstMsg||'',date:'Today',unread:0,messages};
+  APP.data.conversations = [conv, ...(APP.data.conversations||[])];
+  lsSave('conversations', APP.data.conversations);
+  APP.convActive = id;
+  closeModal();
+  renderCurrentPage();
+  updateSbBadges();
+  toast('Conversation started with '+name+'!','success');
+}
+
+function openEditConversation(id){
+  const conv = (APP.data.conversations||[]).find(c=>c.id===id);
+  if(!conv) return;
+  const colors = ['navy','teal','gold','red','green','purple'];
+  openModal('Edit Conversation',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contact Name *</label><input class="form-control" id="f-cev-name" value="${conv.contact}"></div>
+      <div class="form-group"><label class="form-label">Initials</label><input class="form-control" id="f-cev-initials" value="${conv.contactInitials}" maxlength="2"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Avatar Color</label><select class="form-control" id="f-cev-color">${colors.map(c=>`<option value="${c}"${c===conv.contactColor?' selected':''}>${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}</select></div>`,
+    `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-danger btn-sm" onclick="deleteConversation('${id}')">🗑 Delete</button><button class="btn btn-primary" onclick="saveEditConversation('${id}')">Save</button>`
+  );
+}
+
+function saveEditConversation(id){
+  const conv = (APP.data.conversations||[]).find(c=>c.id===id);
+  if(!conv) return;
+  const name = document.getElementById('f-cev-name').value.trim();
+  if(!name){ toast('Name required.','error'); return; }
+  conv.contact = name;
+  conv.contactInitials = document.getElementById('f-cev-initials').value.trim().toUpperCase() || name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  conv.contactColor = document.getElementById('f-cev-color').value;
+  lsSave('conversations', APP.data.conversations);
+  closeModal();
+  renderCurrentPage();
+  toast('Conversation updated.','success');
+}
+
+function deleteConversation(id){
+  const conv = (APP.data.conversations||[]).find(c=>c.id===id);
+  if(!conv) return;
+  if(!confirm(`Delete the conversation with "${conv.contact}"? This cannot be undone.`)) return;
+  APP.data.conversations = APP.data.conversations.filter(c=>c.id!==id);
+  lsSave('conversations', APP.data.conversations);
+  APP.convActive = APP.data.conversations[0]?.id || null;
+  closeModal();
+  renderCurrentPage();
+  updateSbBadges();
+  toast('Conversation deleted.','warning');
+}
+
+const BIBLE_VERSES = [
+  {text:'"Whatever you do, work at it with all your heart, as working for the Lord, not for human masters."', ref:'Col. 3:23'},
+  {text:'"Commit to the Lord whatever you do, and he will establish your plans."', ref:'Prov. 16:3'},
+  {text:'"For I know the plans I have for you — plans to prosper you and not to harm you, plans to give you hope and a future."', ref:'Jer. 29:11'},
+  {text:'"She is clothed with strength and dignity, and she laughs without fear of the future."', ref:'Prov. 31:25'},
+  {text:'"Trust in the Lord with all your heart and lean not on your own understanding."', ref:'Prov. 3:5'},
+  {text:'"I can do all this through him who gives me strength."', ref:'Phil. 4:13'},
+  {text:'"And we know that in all things God works for the good of those who love him."', ref:'Rom. 8:28'},
+  {text:'"Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go."', ref:'Josh. 1:9'},
+  {text:'"The Lord is my shepherd, I lack nothing."', ref:'Ps. 23:1'},
+  {text:'"Give, and it will be given to you. A good measure, pressed down, shaken together and running over."', ref:'Luke 6:38'},
+  {text:'"But seek first his kingdom and his righteousness, and all these things will be given to you as well."', ref:'Matt. 6:33'},
+  {text:'"Do not be anxious about anything, but in every situation, by prayer and petition, present your requests to God."', ref:'Phil. 4:6'},
+  {text:'"The Lord your God is with you, the Mighty Warrior who saves."', ref:'Zeph. 3:17'},
+  {text:'"Cast all your anxiety on him because he cares for you."', ref:'1 Pet. 5:7'},
+];
+
+function rotateDailyVerse(){
+  const dayIndex = Math.floor(Date.now() / 86400000) % BIBLE_VERSES.length;
+  const v = BIBLE_VERSES[dayIndex];
+  const el = document.getElementById('sb-verse-text');
+  if(el) el.textContent = v.text + ' — ' + v.ref;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2995,6 +3197,8 @@ document.addEventListener('DOMContentLoaded', () => {
   buildBottomNav();
   updateUserInfo();
   updateExchangeRateDisplay();
+  rotateDailyVerse();
+  fetchLiveExchangeRate();
   navigate('home');
 });
 </script>
