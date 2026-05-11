@@ -617,6 +617,42 @@ html,body{font-size:13px}
 .cp-stat-val{font-size:26px;font-weight:700;color:var(--navy);line-height:1}
 .cp-stat-lbl{font-size:11px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.04em}
 /* ── END POLISH ───────────────────────────────────────────────────── */
+
+/* ── CHAT BUBBLE LAYOUT ───────────────────────────────────────────── */
+.chat-area{display:flex;flex-direction:column;gap:10px;padding:14px;max-height:340px;overflow-y:auto;background:var(--bg);border-radius:var(--r)}
+.chat-bubble-wrap{display:flex;align-items:flex-end;gap:8px}
+.chat-bubble-wrap.right{flex-direction:row-reverse}
+.chat-bubble{max-width:72%;padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.6;position:relative}
+.chat-bubble-wrap.left .chat-bubble{background:var(--surface);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:3px}
+.chat-bubble-wrap.right .chat-bubble{background:var(--navy);color:#fff;border-bottom-right-radius:3px}
+.chat-bubble-time{font-size:10px;color:var(--text3);margin-top:3px;text-align:right}
+.chat-bubble-wrap.left .chat-bubble-time{text-align:left;color:var(--text3)}
+.chat-compose-row{display:flex;gap:8px;margin-top:10px}
+.chat-compose-input{flex:1;border:1px solid var(--border2);border-radius:var(--r);padding:8px 12px;font-size:13px;font-family:var(--font);outline:none;transition:border .15s;resize:none;min-height:38px}
+.chat-compose-input:focus{border-color:var(--teal)}
+.chat-thread-selector{display:flex;gap:8px;margin-bottom:14px}
+.chat-thread-btn{flex:1;padding:10px 14px;border-radius:var(--r2);border:1.5px solid var(--border2);background:var(--surface);cursor:pointer;text-align:center;transition:all .15s}
+.chat-thread-btn:hover{border-color:var(--teal);background:var(--teal-pale)}
+.chat-thread-btn.on{border-color:var(--navy);background:var(--navy-pale)}
+.chat-thread-btn-title{font-size:12px;font-weight:600;color:var(--navy)}
+.chat-thread-btn-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ── FLOATING TIMER PILL ─────────────────────────────────────────── */
+#floating-timer{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--navy);color:#fff;border-radius:50px;padding:10px 20px;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:12px;font-family:var(--font)}
+#floating-timer-display{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+#floating-timer-back{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s}
+#floating-timer-back:hover{background:rgba(255,255,255,.25)}
+
+/* ── BREAK BANNER ────────────────────────────────────────────────── */
+.break-banner{background:var(--amber-pale);border:1px solid rgba(99,56,6,.2);border-radius:var(--r2);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.break-banner-text{font-size:13px;font-weight:600;color:var(--amber)}
+.break-timer-btn{background:var(--amber);color:#fff;border:none;border-radius:var(--r);padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* ── MARKETING REPORT CARDS ──────────────────────────────────────── */
+.mkt-stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.mkt-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
+.mkt-stat-val{font-size:22px;font-weight:700;color:var(--navy);line-height:1;margin-bottom:4px}
+.mkt-stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
 </style>
 </head>
 <body>
@@ -672,6 +708,11 @@ html,body{font-size:13px}
   </div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="floating-timer" style="display:none">
+  <span>⏱</span>
+  <span id="floating-timer-display">00:00:00</span>
+  <button id="floating-timer-back" onclick="setVATab('timelog')">Back to Timelog</button>
+</div>
 <script>
 'use strict';
 
@@ -697,12 +738,12 @@ const SEED = {
     {id:'u5',displayName:'Grace Santos',email:'grace@thejobscollective.com',role:'va',initials:'GS',avatarColor:'green',capacity:45,status:'Active',skills:['Client Relations','Reporting','Sales'],clientCount:3,pin:'1234',kpi:{completionRate:96,slaCompliance:95,errorRate:2,satisfaction:5}},
   ],
   clients: [
-    {id:'c1',name:'BrandX Philippines',clientPin:'1234',status:'Active',package:'Premium',rateUsd:500,vaCostPhp:18000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-22',contractEnd:'2025-09-30',timezone:'PHT (UTC+8)',healthScore:82,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[{name:'Kevin Tan',role:'Marketing Manager',email:'kevin@brandx.ph',phone:'+63 917 xxx xxxx',isPrimary:true}],reports:[],oosCount:2,oosValue:150,archived:false,createdAt:'2025-01-15'},
-    {id:'c2',name:'TechStart Manila',clientPin:'1234',status:'Active',package:'Starter',rateUsd:300,vaCostPhp:12000,priority:'Medium',assignedVaUid:'u3',assignedVa:'Ana Cruz',assignedVaInitials:'AC',assignedVaColor:'red',lastContact:'2025-04-20',contractEnd:'2025-06-30',timezone:'PHT (UTC+8)',healthScore:67,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:1,oosValue:80,archived:false,createdAt:'2025-02-01'},
-    {id:'c3',name:'Sunrise Wellness PH',clientPin:'1234',status:'Onboarding',package:'Growth',rateUsd:400,vaCostPhp:15000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-21',contractEnd:'2025-10-31',timezone:'PHT (UTC+8)',healthScore:71,onboardingStep:4,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-15'},
-    {id:'c4',name:'Bloom Beauty Co.',clientPin:'1234',status:'Completed',package:'Custom',rateUsd:250,vaCostPhp:9000,priority:'Low',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-10',contractEnd:'2025-04-10',timezone:'PHT (UTC+8)',healthScore:90,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2024-10-01'},
-    {id:'c5',name:'FreshMart PH',clientPin:'1234',status:'Proposal',package:'Premium',rateUsd:500,vaCostPhp:0,priority:'High',assignedVaUid:'u1',assignedVa:'Justine Bautista',assignedVaInitials:'JB',assignedVaColor:'navy',lastContact:'2025-04-20',contractEnd:'',timezone:'PHT (UTC+8)',healthScore:0,onboardingStep:0,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-10'},
-    {id:'c6',name:'Pacific Foods PH',clientPin:'1234',status:'Lead',package:'Growth',rateUsd:0,vaCostPhp:0,priority:'High',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-18',contractEnd:'',timezone:'PHT (UTC+8)',healthScore:0,onboardingStep:0,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-18'},
+    {id:'c1',name:'BrandX Philippines',clientPin:'1234',status:'Active',package:'Premium',rateUsd:500,vaCostPhp:18000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-22',contractEnd:'2025-09-30',timezone:'PHT (UTC+8)',healthScore:82,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[{name:'Kevin Tan',role:'Marketing Manager',email:'kevin@brandx.ph',phone:'+63 917 xxx xxxx',isPrimary:true}],reports:[],oosCount:2,oosValue:150,archived:false,createdAt:'2025-01-15',marketingMetrics:{}},
+    {id:'c2',name:'TechStart Manila',clientPin:'1234',status:'Active',package:'Starter',rateUsd:300,vaCostPhp:12000,priority:'Medium',assignedVaUid:'u3',assignedVa:'Ana Cruz',assignedVaInitials:'AC',assignedVaColor:'red',lastContact:'2025-04-20',contractEnd:'2025-06-30',timezone:'PHT (UTC+8)',healthScore:67,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:1,oosValue:80,archived:false,createdAt:'2025-02-01',marketingMetrics:{}},
+    {id:'c3',name:'Sunrise Wellness PH',clientPin:'1234',status:'Onboarding',package:'Growth',rateUsd:400,vaCostPhp:15000,priority:'High',assignedVaUid:'u2',assignedVa:'Maria Reyes',assignedVaInitials:'MR',assignedVaColor:'teal',lastContact:'2025-04-21',contractEnd:'2025-10-31',timezone:'PHT (UTC+8)',healthScore:71,onboardingStep:4,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-15',marketingMetrics:{}},
+    {id:'c4',name:'Bloom Beauty Co.',clientPin:'1234',status:'Completed',package:'Custom',rateUsd:250,vaCostPhp:9000,priority:'Low',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-10',contractEnd:'2025-04-10',timezone:'PHT (UTC+8)',healthScore:90,onboardingStep:7,onboardingDone:true,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2024-10-01',marketingMetrics:{}},
+    {id:'c5',name:'FreshMart PH',clientPin:'1234',status:'Proposal',package:'Premium',rateUsd:500,vaCostPhp:0,priority:'High',assignedVaUid:'u1',assignedVa:'Justine Bautista',assignedVaInitials:'JB',assignedVaColor:'navy',lastContact:'2025-04-20',contractEnd:'',timezone:'PHT (UTC+8)',healthScore:0,onboardingStep:0,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-10',marketingMetrics:{}},
+    {id:'c6',name:'Pacific Foods PH',clientPin:'1234',status:'Lead',package:'Growth',rateUsd:0,vaCostPhp:0,priority:'High',assignedVaUid:'u5',assignedVa:'Grace Santos',assignedVaInitials:'GS',assignedVaColor:'green',lastContact:'2025-04-18',contractEnd:'',timezone:'PHT (UTC+8)',healthScore:0,onboardingStep:0,onboardingDone:false,notes:[],deliverables:[],tools:[],socials:{},contacts:[],reports:[],oosCount:0,oosValue:0,archived:false,createdAt:'2025-04-18',marketingMetrics:{}},
   ],
   tasks: [
     {id:'t1',title:'Schedule BrandX Week 17 — IG + FB posts',done:false,priority:'Urgent',dueDate:'2025-04-23',project:'BrandX Philippines',clientId:'c1',assigneeUid:'u2',assigneeName:'Maria Reyes',assigneeInitials:'MR',assigneeColor:'teal',isOos:false,archived:false,createdAt:'2025-04-23T06:00:00Z',firstResponseAt:null},
@@ -783,7 +824,7 @@ const APP = {
   va: { loggedIn:false,vaId:null,pinEntry:'',tab:'dashboard',taskFilter:'open' },
   cp: { clientId:null,tab:'overview' },
   cpTab: 'overview', // client-facing portal tab
-  timer: { running:false,start:null,elapsed:0,iv:null },
+  timer: { running:false,start:null,elapsed:0,iv:null,breakUntil:null,breakIv:null },
   showArchived: false,
 };
 
@@ -2088,7 +2129,7 @@ function updatePinDots(){ const filled=APP.va.pinEntry.length; [0,1,2,3].forEach
 function pinPress(k){ if(k==='←'){APP.va.pinEntry=APP.va.pinEntry.slice(0,-1);updatePinDots();return;} if(k==='✓'||APP.va.pinEntry.length>=4){checkPin();return;} APP.va.pinEntry+=k; updatePinDots(); if(APP.va.pinEntry.length===4) setTimeout(checkPin,180); }
 function checkPin(){ const va=APP.data.team.find(v=>v.id===APP.va.vaId); if(APP.va.pinEntry===(va?.pin||'1234')){APP.va.loggedIn=true;APP.va.tab='dashboard';renderCurrentPage();toast('Welcome back, '+va.displayName.split(' ')[0]+'! 👋','success');} else {APP.va.pinEntry='';renderCurrentPage();toast('Incorrect PIN.','error');}}
 function vaLogout(){ APP.va.loggedIn=false;APP.va.vaId=null;APP.va.pinEntry='';APP.va.tab='dashboard';if(APP.timer.iv){clearInterval(APP.timer.iv);APP.timer.iv=null;APP.timer.running=false;APP.timer.elapsed=0;}renderCurrentPage(); }
-function setVATab(t){ APP.va.tab=t; renderCurrentPage(); }
+function setVATab(t){ APP.va.tab=t; renderCurrentPage(); updateFloatingTimer(); }
 
 function renderVADashboard(){
   const va = APP.data.team.find(v=>v.id===APP.va.vaId);
@@ -2109,7 +2150,7 @@ function renderVADashboard(){
     clients: renderVATabClients(va,myClients),
     sops: renderVATabSOPs(),
   };
-  return `<div style="display:flex;flex-direction:column;height:100%;overflow:hidden"><div class="portal-topbar"><div><div style="font-size:10px;color:rgba(255,255,255,.5)">Logged in as</div><div style="font-size:14px;font-weight:600;color:#fff">${va.displayName} · ${va.role==='va'?'Partner':va.role}</div></div><div style="display:flex;align-items:center;gap:8px"><div class="av av-md ${avColor(va.avatarColor)}">${va.initials}</div><button class="btn btn-sm btn-secondary" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff" onclick="vaLogout()">Log Out</button></div></div><div class="portal-tabs">${[['dashboard','🏠 Dashboard'],['tasks','✅ Tasks'],['timelog','⏱ Time Log'],['clients','🤝 My Clients'],['sops','📋 SOPs']].map(([t,l])=>`<div class="ptab${APP.va.tab===t?' on':''}" onclick="setVATab('${t}')">${l}</div>`).join('')}</div><div class="portal-body">${tabContent[APP.va.tab]||''}</div></div>`;
+  return `<div style="display:flex;flex-direction:column;height:100%;overflow:hidden"><div class="portal-topbar"><div><div style="font-size:10px;color:rgba(255,255,255,.5)">Logged in as</div><div style="font-size:14px;font-weight:600;color:#fff">${va.displayName} · ${va.role==='va'?'Partner':va.role}</div></div><div style="display:flex;align-items:center;gap:8px"><div class="av av-md ${avColor(va.avatarColor)}">${va.initials}</div><button class="btn btn-sm btn-secondary" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff" onclick="vaLogout()">Log Out</button></div></div><div class="portal-tabs">${[['dashboard','🏠 My Day'],['tasks','✅ Tasks'],['timelog','⏱ Time Log'],['clients','🤝 My Clients'],['sops','📋 SOPs']].map(([t,l])=>`<div class="ptab${APP.va.tab===t?' on':''}" onclick="setVATab('${t}')">${l}</div>`).join('')}</div><div class="portal-body">${tabContent[APP.va.tab]||''}</div></div>`;
 }
 
 function renderVATabDash(va, myTasks, myOpen, myOverdue, myClients, todayMins, kpiScore, slaRate, oosCount){
@@ -2128,15 +2169,118 @@ function getWeekStart(){ const d=new Date(); d.setDate(d.getDate()-d.getDay()); 
 
 function renderVATabTimelog(va, myLogs, td, todayMins){
   const elapsed = APP.timer.elapsed;
-  const hh = String(Math.floor(elapsed/3600)).padStart(2,'0');
-  const mm = String(Math.floor((elapsed%3600)/60)).padStart(2,'0');
-  const ss = String(elapsed%60).padStart(2,'0');
   const weekMins = myLogs.filter(l=>l.date>=getWeekStart()).reduce((a,l)=>a+(l.minutes||0),0);
-  return `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px"><div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--teal)">${Math.floor(todayMins/60)}h ${todayMins%60}m</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Today</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--navy)">${Math.floor(weekMins/60)}h</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">This Week</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--gold-dark)">${myLogs.length}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Total Entries</div></div></div><div class="card card-pad" style="margin-bottom:14px"><div style="font-size:13px;font-weight:600;margin-bottom:10px">⏱ Live Timer</div><div class="timer-display" id="timer-display">${hh}:${mm}:${ss}</div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px">${APP.timer.running?`<button class="timer-btn-stop" onclick="stopTimer()">⏹ Stop & Log</button>`:`<button class="timer-btn-start" onclick="startTimer()">▶ Start Timer</button>`}<button class="timer-btn-reset" onclick="resetTimer()">↺ Reset</button></div><div class="form-group"><label class="form-label">What are you working on? *</label><input class="form-control" id="timer-desc" placeholder="e.g. Scheduled BrandX Week 18 posts"></div><div class="form-row"><div class="form-group"><label class="form-label">Client / Project</label><select class="form-control" id="timer-project"><option value="">— Select —</option>${APP.data.clients.filter(c=>c.assignedVaUid===va.id&&c.status==='Active').map(c=>`<option value="${c.id}|${c.name}">${c.name}</option>`).join('')}<option value="">Internal</option><option value="">Admin</option></select></div><div class="form-group"><label class="form-label">Or log manually (minutes)</label><input type="number" class="form-control" id="timer-manual" placeholder="e.g. 45"></div></div><button class="btn btn-primary w-full" onclick="logTime('${va.id}')">📋 Log Time Entry</button></div><div class="sec-head"><div class="sec-title">Time Log History</div></div><div class="card"><table class="data-table"><thead><tr><th>Date</th><th>Description</th><th>Project</th><th style="text-align:right">Duration</th><th style="width:24px"></th></tr></thead><tbody>${myLogs.slice().reverse().map(l=>`<tr><td style="font-size:11px;color:var(--text3)">${l.date}</td><td style="font-size:12px">${l.description||'—'}</td><td style="font-size:11px;color:var(--text3)">${l.project||'—'}</td><td style="text-align:right;font-weight:600;font-size:12px">${Math.floor((l.minutes||0)/60)}h ${(l.minutes||0)%60}m</td><td><button class="btn-icon" onclick="archiveDoc('timelogs','${l.id}','${(l.description||'Log').slice(0,20)}')" style="opacity:0" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0">🗃</button></td></tr>`).join('')}</tbody></table>${myLogs.length===0?emptyState('No time entries yet.'):''}</div>`;
+  const onBreak = !!(APP.timer.running && APP.timer.breakUntil && Date.now() < APP.timer.breakUntil);
+  const breakRemaining = onBreak ? Math.max(0, Math.floor((APP.timer.breakUntil - Date.now())/1000)) : 0;
+  const bm = String(Math.floor(breakRemaining/60)).padStart(2,'0');
+  const bs = String(breakRemaining%60).padStart(2,'0');
+
+  // Build timer buttons cleanly
+  let timerBtns = '';
+  if(!APP.timer.running){
+    timerBtns = `<button class="timer-btn-start" onclick="startTimer()">▶ Start Timer</button>`;
+  } else if(onBreak){
+    timerBtns = `<button class="timer-btn-start" onclick="endBreakEarly()">▶ Resume</button><button class="timer-btn-stop" onclick="stopTimer()">⏹ Stop</button>`;
+  } else {
+    timerBtns = `<button class="timer-btn-stop" onclick="stopTimer()">⏹ Stop &amp; Log</button><button style="background:var(--amber-pale);color:var(--amber);border:1px solid rgba(99,56,6,.2);padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="startBreak()">☕ 1h Break</button>`;
+  }
+  timerBtns += `<button class="timer-btn-reset" onclick="resetTimer()">↺ Reset</button>`;
+
+  return `
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--teal)">${Math.floor(todayMins/60)}h ${todayMins%60}m</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Today</div></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--navy)">${Math.floor(weekMins/60)}h</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">This Week</div></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:12px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--gold-dark)">${myLogs.length}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase">Total Entries</div></div>
+  </div>
+  ${onBreak?`<div class="break-banner" id="break-banner"><div class="break-banner-text">☕ On break — resumes in <span id="break-countdown">${bm}:${bs}</span></div><button class="break-timer-btn" onclick="endBreakEarly()">End Break Early</button></div>`:''}
+  <div class="card card-pad" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">⏱ Live Timer</div>
+    <div class="timer-display" id="timer-display">${fmtElapsed(elapsed)}</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px">${timerBtns}</div>
+    <div class="form-group"><label class="form-label">What are you working on? *</label><input class="form-control" id="timer-desc" placeholder="e.g. Scheduled BrandX Week 18 posts"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Client / Project</label><select class="form-control" id="timer-project"><option value="">— Select —</option>${APP.data.clients.filter(c=>c.assignedVaUid===va.id&&c.status==='Active').map(c=>`<option value="${c.id}|${c.name}">${c.name}</option>`).join('')}<option value="">Internal</option><option value="">Admin</option></select></div>
+      <div class="form-group"><label class="form-label">Or log manually (minutes)</label><input type="number" class="form-control" id="timer-manual" placeholder="e.g. 45"></div>
+    </div>
+    <button class="btn btn-primary w-full" onclick="logTime('${va.id}')">📋 Log Time Entry</button>
+  </div>
+  <div class="sec-head"><div class="sec-title">Time Log History</div></div>
+  <div class="card">
+    <table class="data-table"><thead><tr><th>Date</th><th>Description</th><th>Project</th><th style="text-align:right">Duration</th><th style="width:24px"></th></tr></thead>
+    <tbody>${myLogs.slice().reverse().map(l=>`<tr><td style="font-size:11px;color:var(--text3)">${l.date}</td><td style="font-size:12px">${l.description||'—'}</td><td style="font-size:11px;color:var(--text3)">${l.project||'—'}</td><td style="text-align:right;font-weight:600;font-size:12px">${Math.floor((l.minutes||0)/60)}h ${(l.minutes||0)%60}m</td><td><button class="btn-icon" onclick="archiveDoc('timelogs','${l.id}','${(l.description||'Log').slice(0,20)}')" style="opacity:0" onmouseenter="this.style.opacity=1" onmouseleave="this.style.opacity=0">🗃</button></td></tr>`).join('')}</tbody>
+    </table>${myLogs.length===0?emptyState('No time entries yet.'):''}
+  </div>`;
 }
 
 function renderVATabClients(va, myClients){
-  return `${myClients.map(c=>`<div class="card" style="margin-bottom:12px"><div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:15px;font-weight:700">${c.name}</div><div style="font-size:11px;color:var(--text3)">${c.package} · $${c.rateUsd}/mo · ₱${FIN.toPhp(c.rateUsd).toLocaleString()}/mo</div></div><span class="tag t-teal">${c.status}</span></div><div style="padding:12px 16px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-bottom:1px solid var(--border)"><div><div class="info-label">Health</div><div class="info-val" style="color:${HEALTH.color(c.healthScore||0)}">${HEALTH.compute(c)}</div></div><div><div class="info-label">SLA Rate</div><div class="info-val">${SLA.complianceRate(APP.data.tasks.filter(t=>t.clientId===c.id))}%</div></div><div><div class="info-label">Open Tasks</div><div class="info-val">${APP.data.tasks.filter(t=>t.clientId===c.id&&!t.done&&!t.archived&&t.assigneeUid===va.id).length}</div></div><div><div class="info-label">OOS Tasks</div><div class="info-val" style="color:var(--purple)">${APP.data.tasks.filter(t=>t.clientId===c.id&&t.isOos).length}</div></div></div><div style="padding:12px 16px">${APP.data.tasks.filter(t=>t.clientId===c.id&&t.assigneeUid===va.id&&!t.archived).slice(0,4).map(t=>`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)" onclick="toggleTask('${t.id}')"><div class="chk${t.done?' done':''}"></div><span style="font-size:12px;flex:1;${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.isOos?`<span class="oos-badge">OOS</span> `:''}${t.title}</span>${tagHtml(t.priority)}</div>`).join('')}</div></div>`).join('') || emptyState('No active clients assigned.')}`;
+  return `${myClients.map(c=>{
+    const health = HEALTH.compute(c);
+    const slaRate = SLA.complianceRate(APP.data.tasks.filter(t=>t.clientId===c.id));
+    const openTasks = APP.data.tasks.filter(t=>t.clientId===c.id&&!t.done&&!t.archived&&t.assigneeUid===va.id).length;
+    const tools = (c.tools||[]);
+    const credId = 'cred-'+c.id;
+    // Client messages from this client in conversations
+    const clientConvs = (APP.data.conversations||[]).filter(cv=>cv.clientId===c.id);
+    const unreadFromClient = clientConvs.reduce((a,cv)=>a+(cv.unread||0),0);
+    return `<div class="card" style="margin-bottom:12px">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:15px;font-weight:700">${c.name}</div>
+          <div style="font-size:11px;color:var(--text3)">${c.package} · ${c.status}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${unreadFromClient>0?`<span class="tag t-red" style="cursor:pointer" onclick="navigate('conversations')">${unreadFromClient} msg${unreadFromClient>1?'s':''}</span>`:''}
+          <span class="tag t-teal">${c.status}</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-bottom:1px solid var(--border)">
+        <div><div class="info-label">Health Score</div><div class="info-val" style="color:${HEALTH.color(health)}">${health}/100</div></div>
+        <div><div class="info-label">SLA Rate</div><div class="info-val" style="color:${slaRate>=90?'var(--green)':slaRate>=75?'var(--gold-dark)':'var(--red)'}">${slaRate}%</div></div>
+        <div><div class="info-label">Open Tasks</div><div class="info-val">${openTasks}</div></div>
+      </div>
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+        ${APP.data.tasks.filter(t=>t.clientId===c.id&&t.assigneeUid===va.id&&!t.archived).slice(0,4).map(t=>`<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--border)" onclick="toggleTask('${t.id}')"><div class="chk${t.done?' done':''}"></div><span style="font-size:12px;flex:1;${t.done?'text-decoration:line-through;color:var(--text3)':''}">${t.isOos?'<span class="oos-badge">OOS</span> ':''}${t.title}</span>${tagHtml(t.priority)}</div>`).join('')||'<div style="font-size:12px;color:var(--text3);padding:4px 0">No tasks assigned.</div>'}
+      </div>
+      <div style="padding:10px 16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="toggleVACredentials('${credId}')">
+          <div style="font-size:12px;font-weight:600;color:var(--navy)">🔑 Credentials &amp; Access</div>
+          <svg id="${credId}-arr" viewBox="0 0 12 12" fill="none" width="12" height="12" style="transition:transform .2s"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div id="${credId}" style="display:none;margin-top:8px">
+          ${tools.length===0?`<div style="font-size:12px;color:var(--text3)">No credentials stored for this client yet.</div>`:''}
+          ${tools.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:16px">${t.emoji||'🔧'}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600">${t.name}</div>
+              <div style="font-size:11px;color:var(--text3)">${t.username||'No username set'}${t.note?' · '+t.note:''}</div>
+            </div>
+            <span class="tag ${t.hasAccess?'t-green':'t-red'}" style="font-size:10px">${t.hasAccess?'✓ Access':'No Access'}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+      ${clientConvs.length>0?`<div style="padding:10px 16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px">💬 Messages from Client</div>
+        ${clientConvs.map(cv=>{
+          const lastMsg = (cv.messages||[]).filter(m=>m.from==='client').slice(-1)[0];
+          return lastMsg?`<div style="background:var(--bg);border-radius:var(--r);padding:8px 10px;font-size:12px;color:var(--text2);margin-bottom:6px">
+            <div style="font-weight:600;color:var(--navy);margin-bottom:2px">${cv.type==='client-management'?'To Management':'To Partner'}</div>
+            <div>${lastMsg.text}</div>
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">${lastMsg.time||''}</div>
+          </div>`:'';
+        }).join('')}
+        <button class="btn btn-xs btn-secondary" onclick="navigate('conversations')">View in Conversations →</button>
+      </div>`:''}
+    </div>`;
+  }).join('') || emptyState('No active clients assigned.')}`;
+}
+
+function toggleVACredentials(id){
+  const el = document.getElementById(id);
+  const arr = document.getElementById(id+'-arr');
+  if(!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if(arr) arr.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
 
 function renderSOPCards(sops, showAdmin){
@@ -2318,7 +2462,37 @@ function renderCPDeliverables(c){
 
 function renderCPReports(c){
   if(!c.reports) c.reports=[];
-  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:13px;color:var(--text2)">${c.reports.length} monthly report${c.reports.length!==1?'s':''}</div><button class="btn btn-sm btn-primary" onclick="openAddReport('${c.id}')">+ Add Report</button></div>${c.reports.map((r,i)=>`<div class="card card-pad" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div><div style="font-size:14px;font-weight:700">${r.month||'—'}</div><div style="font-size:12px;color:var(--text2);margin-top:2px">${r.summary||'No summary.'}</div></div><div style="display:flex;gap:6px;flex-shrink:0">${r.url?`<a href="${r.url}" target="_blank" class="btn btn-xs btn-secondary">🔗 View</a>`:''}<button class="btn-icon" onclick="deleteReport('${c.id}',${i})">✕</button></div></div><div class="report-metrics"><div class="rmet"><div class="rmet-val">${r.postsPublished||0}</div><div class="rmet-lbl">Posts</div></div><div class="rmet"><div class="rmet-val">${r.tasksCompleted||0}</div><div class="rmet-lbl">Tasks Done</div></div><div class="rmet"><div class="rmet-val">${r.hoursLogged||0}h</div><div class="rmet-lbl">Hours</div></div></div>${r.highlights?`<div style="margin-top:10px;font-size:12px;color:var(--text2);border-top:1px solid var(--border);padding-top:8px"><strong>Highlights:</strong> ${r.highlights}</div>`:''}</div>`).join('')}${c.reports.length===0?'<div class="card card-pad empty-state">No reports yet. Add your first monthly report above.</div>':''}`;
+  const va = APP.data.team.find(v=>v.id===c.assignedVaUid);
+  const MARKETING_SKILLS = ['Facebook Ads','Instagram','Social Media','Marketing','Canva','TikTok','Content','Copywriting','SEO','LinkedIn'];
+  const isMarketing = (va?.skills||[]).some(s=>MARKETING_SKILLS.includes(s));
+  const m = c.marketingMetrics || {};
+  const mktSection = isMarketing ? `
+  <div class="card card-pad" style="margin-bottom:16px;border-left:3px solid var(--teal)">
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">📊 Marketing Metrics (visible to client)</div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Period (e.g. May 2026)</label><input class="form-control" id="mkt-period" value="${m.period||''}" placeholder="May 2026"></div><div class="form-group"><label class="form-label">Top Platform</label><input class="form-control" id="mkt-topPlatform" value="${m.topPlatform||''}" placeholder="Instagram"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Reach</label><input type="number" class="form-control" id="mkt-reach" value="${m.reach||''}" placeholder="e.g. 12500"></div><div class="form-group"><label class="form-label">Engagement Rate (%)</label><input type="number" class="form-control" id="mkt-engagementRate" value="${m.engagementRate||''}" placeholder="e.g. 4.2" step="0.1"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Leads Generated</label><input type="number" class="form-control" id="mkt-leadsGenerated" value="${m.leadsGenerated||''}" placeholder="e.g. 38"></div><div class="form-group"><label class="form-label">Link Clicks</label><input type="number" class="form-control" id="mkt-linkClicks" value="${m.linkClicks||''}" placeholder="e.g. 210"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Posts Published</label><input type="number" class="form-control" id="mkt-postsPublished" value="${m.postsPublished||''}" placeholder="e.g. 18"></div><div class="form-group"><label class="form-label">Follower Growth</label><input type="number" class="form-control" id="mkt-followerGrowth" value="${m.followerGrowth||''}" placeholder="e.g. +120"></div></div>
+    <button class="btn btn-primary" onclick="saveMarketingMetrics('${c.id}')">💾 Save Marketing Metrics</button>
+  </div>` : `<div class="card card-pad" style="margin-bottom:16px;background:var(--bg);border-color:var(--border)"><div style="font-size:12px;color:var(--text3)">Marketing metrics are only available for marketing-focused partners. ${c.assignedVa} is not assigned marketing skills.</div></div>`;
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:13px;color:var(--text2)">${c.reports.length} monthly report${c.reports.length!==1?'s':''}</div><button class="btn btn-sm btn-primary" onclick="openAddReport('${c.id}')">+ Add Report</button></div>${mktSection}${c.reports.map((r,i)=>`<div class="card card-pad" style="margin-bottom:10px"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px"><div><div style="font-size:14px;font-weight:700">${r.month||'—'}</div><div style="font-size:12px;color:var(--text2);margin-top:2px">${r.summary||'No summary.'}</div></div><div style="display:flex;gap:6px;flex-shrink:0">${r.url?`<a href="${r.url}" target="_blank" class="btn btn-xs btn-secondary">🔗 View</a>`:''}<button class="btn-icon" onclick="deleteReport('${c.id}',${i})">✕</button></div></div><div class="report-metrics"><div class="rmet"><div class="rmet-val">${r.postsPublished||0}</div><div class="rmet-lbl">Posts</div></div><div class="rmet"><div class="rmet-val">${r.tasksCompleted||0}</div><div class="rmet-lbl">Tasks Done</div></div><div class="rmet"><div class="rmet-val">${r.hoursLogged||0}h</div><div class="rmet-lbl">Hours</div></div></div>${r.highlights?`<div style="margin-top:10px;font-size:12px;color:var(--text2);border-top:1px solid var(--border);padding-top:8px"><strong>Highlights:</strong> ${r.highlights}</div>`:''}</div>`).join('')}${c.reports.length===0?'<div class="card card-pad" style="color:var(--text3);font-size:13px">No reports yet. Add your first monthly report above.</div>':''}`;
+}
+
+async function saveMarketingMetrics(clientId){
+  const c = APP.data.clients.find(x=>x.id===clientId);
+  if(!c) return;
+  const metrics = {
+    period: document.getElementById('mkt-period').value.trim(),
+    topPlatform: document.getElementById('mkt-topPlatform').value.trim(),
+    reach: document.getElementById('mkt-reach').value ? Number(document.getElementById('mkt-reach').value) : '',
+    engagementRate: document.getElementById('mkt-engagementRate').value ? Number(document.getElementById('mkt-engagementRate').value) : '',
+    leadsGenerated: document.getElementById('mkt-leadsGenerated').value ? Number(document.getElementById('mkt-leadsGenerated').value) : '',
+    linkClicks: document.getElementById('mkt-linkClicks').value ? Number(document.getElementById('mkt-linkClicks').value) : '',
+    postsPublished: document.getElementById('mkt-postsPublished').value ? Number(document.getElementById('mkt-postsPublished').value) : '',
+    followerGrowth: document.getElementById('mkt-followerGrowth').value ? Number(document.getElementById('mkt-followerGrowth').value) : '',
+  };
+  await updateDoc('clients', clientId, {marketingMetrics: metrics, _actAction:'updated marketing metrics', _actIcon:'📊', _actColor:'teal', _actRecord:c.name});
+  toast('Marketing metrics saved!', 'success');
 }
 
 function renderCPNotes(c){
@@ -2974,19 +3148,50 @@ async function saveTimeLog(){
   toast(`Logged ${Math.floor(mins/60)}h ${mins%60}m successfully!`,'success');
 }
 
+function fmtElapsed(secs){
+  const h=String(Math.floor(secs/3600)).padStart(2,'0');
+  const m=String(Math.floor((secs%3600)/60)).padStart(2,'0');
+  const s=String(secs%60).padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+
+function updateFloatingTimer(){
+  const pill = document.getElementById('floating-timer');
+  if(!pill) return;
+  const show = APP.authMode==='va' && APP.timer.running && APP.va.tab !== 'timelog';
+  pill.style.display = show ? 'flex' : 'none';
+  if(show){
+    const disp = document.getElementById('floating-timer-display');
+    if(disp) disp.textContent = fmtElapsed(APP.timer.elapsed);
+  }
+}
+
 function startTimer(){
   if(APP.timer.running) return;
+  // Clear any break state
+  APP.timer.breakUntil = null;
+  clearInterval(APP.timer.breakIv);
+  APP.timer.breakIv = null;
   APP.timer.running=true;
   APP.timer.start=Date.now()-APP.timer.elapsed*1000;
   APP.timer.iv=setInterval(()=>{
+    // Check break state
+    if(APP.timer.breakUntil){
+      if(Date.now() >= APP.timer.breakUntil){
+        // Auto-resume after break
+        APP.timer.breakUntil = null;
+        APP.timer.start = Date.now() - APP.timer.elapsed*1000;
+        toast('Break time over — timer resumed!','info');
+        renderCurrentPage();
+      }
+      updateBreakBanner();
+      updateFloatingTimer();
+      return;
+    }
     APP.timer.elapsed=Math.floor((Date.now()-APP.timer.start)/1000);
     const el=document.getElementById('timer-display');
-    if(el){
-      const h=String(Math.floor(APP.timer.elapsed/3600)).padStart(2,'0');
-      const m=String(Math.floor((APP.timer.elapsed%3600)/60)).padStart(2,'0');
-      const s=String(APP.timer.elapsed%60).padStart(2,'0');
-      el.textContent=`${h}:${m}:${s}`;
-    }
+    if(el) el.textContent=fmtElapsed(APP.timer.elapsed);
+    updateFloatingTimer();
   },1000);
   const btn=document.querySelector('.timer-btn-start');
   if(btn){
@@ -2994,12 +3199,17 @@ function startTimer(){
     btn.textContent='⏹ Stop & Log';
     btn.setAttribute('onclick','stopTimer()');
   }
+  updateFloatingTimer();
 }
 
 function stopTimer(){
   clearInterval(APP.timer.iv);
   APP.timer.iv=null;
   APP.timer.running=false;
+  APP.timer.breakUntil=null;
+  clearInterval(APP.timer.breakIv);
+  APP.timer.breakIv=null;
+  updateFloatingTimer();
   toast('Timer stopped. Log your entry below.','info');
   renderCurrentPage();
 }
@@ -3009,7 +3219,39 @@ function resetTimer(){
   APP.timer.iv=null;
   APP.timer.running=false;
   APP.timer.elapsed=0;
+  APP.timer.breakUntil=null;
+  clearInterval(APP.timer.breakIv);
+  APP.timer.breakIv=null;
+  updateFloatingTimer();
   renderCurrentPage();
+}
+
+function startBreak(){
+  if(!APP.timer.running){ toast('Start the timer first.','error'); return; }
+  APP.timer.breakUntil = Date.now() + 3600000;
+  // Pause: stop incrementing elapsed (timer.start won't advance during break)
+  // We keep running=true so the interval checks, but elapsed won't change
+  toast('☕ Break started — 1 hour. Timer paused.','info');
+  renderCurrentPage();
+}
+
+function endBreakEarly(){
+  if(!APP.timer.breakUntil) return;
+  APP.timer.breakUntil = null;
+  // Resume: reset start so elapsed continues from where it left off
+  APP.timer.start = Date.now() - APP.timer.elapsed*1000;
+  toast('Break ended — timer resumed!','info');
+  renderCurrentPage();
+}
+
+function updateBreakBanner(){
+  const banner = document.getElementById('break-banner');
+  if(!banner || !APP.timer.breakUntil) return;
+  const remaining = Math.max(0, Math.floor((APP.timer.breakUntil - Date.now())/1000));
+  const bm = String(Math.floor(remaining/60)).padStart(2,'0');
+  const bs = String(remaining%60).padStart(2,'0');
+  const textEl = document.getElementById('break-countdown');
+  if(textEl) textEl.textContent = `${bm}:${bs}`;
 }
 
 async function logTime(vaId){
@@ -4051,6 +4293,127 @@ function clientLogout(){
   renderCurrentPage();
 }
 function setClientTab(t){ APP.cpTab=t; renderCurrentPage(); }
+APP.cpMsgThread = 'client-partner'; // 'client-partner' | 'client-management'
+
+function getOrCreateClientConv(clientId, type){
+  // type: 'client-partner' | 'client-management'
+  APP.data.conversations = APP.data.conversations || [];
+  let conv = APP.data.conversations.find(cv => cv.clientId === clientId && cv.type === type);
+  if(!conv){
+    const c = APP.data.clients.find(x=>x.id===clientId);
+    const contactName = type === 'client-partner' ? (c?.assignedVa || 'Partner') : 'TJC Management';
+    const initials = type === 'client-partner' ? (c?.assignedVaInitials || 'PA') : 'TM';
+    const color = type === 'client-partner' ? (c?.assignedVaColor || 'teal') : 'navy';
+    const id = 'cv' + Date.now() + Math.floor(Math.random()*1000);
+    conv = {id, contact: c?.name || clientId, contactInitials: c?.name?.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() || 'CL', contactColor: 'teal', clientId, type, preview:'', date:'', unread:0, messages:[], _threadLabel: contactName, _threadInitials: initials, _threadColor: color};
+    APP.data.conversations.unshift(conv);
+    lsSave('conversations', APP.data.conversations);
+  }
+  return conv;
+}
+
+function renderClientMessages(c){
+  const thread = APP.cpMsgThread || 'client-partner';
+  const conv = getOrCreateClientConv(c.id, thread);
+  const otherLabel = thread === 'client-partner' ? c.assignedVa : 'TJC Management';
+  const otherInitials = thread === 'client-partner' ? c.assignedVaInitials : 'TM';
+  const otherColor = thread === 'client-partner' ? c.assignedVaColor : 'navy';
+  const msgs = conv.messages || [];
+  return `
+  <div style="max-width:560px">
+    <div class="chat-thread-selector">
+      <div class="chat-thread-btn${thread==='client-partner'?' on':''}" onclick="APP.cpMsgThread='client-partner';renderCurrentPage()">
+        <div class="chat-thread-btn-title">💬 Your Partner</div>
+        <div class="chat-thread-btn-sub">${c.assignedVa}</div>
+      </div>
+      <div class="chat-thread-btn${thread==='client-management'?' on':''}" onclick="APP.cpMsgThread='client-management';renderCurrentPage()">
+        <div class="chat-thread-btn-title">💬 TJC Management</div>
+        <div class="chat-thread-btn-sub">Justine / TJC Team</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
+        <div class="av av-sm ${avColor(otherColor)}">${otherInitials}</div>
+        <div style="font-size:13px;font-weight:600">${otherLabel}</div>
+        <span style="font-size:10px;color:var(--text3);margin-left:auto">${msgs.length} message${msgs.length!==1?'s':''}</span>
+      </div>
+      <div class="chat-area" id="client-chat-area">
+        ${msgs.length===0?`<div style="text-align:center;color:var(--text3);font-size:12px;padding:20px 0">No messages yet. Send your first message below!</div>`:''}
+        ${msgs.map(m=>{
+          const isClient = m.from==='client';
+          return `<div class="chat-bubble-wrap ${isClient?'right':'left'}">
+            <div class="av av-xs ${isClient?'av-teal':avColor(otherColor)}">${isClient?c.assignedVaInitials:otherInitials}</div>
+            <div>
+              <div class="chat-bubble">${m.text}</div>
+              <div class="chat-bubble-time">${m.time||''}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="padding:10px 14px;border-top:1px solid var(--border)">
+        <div class="chat-compose-row">
+          <textarea class="chat-compose-input" id="client-msg-input" placeholder="Type your message..." rows="2"></textarea>
+          <button class="btn btn-primary" onclick="sendClientMessage('${c.id}','${thread}')">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function sendClientMessage(clientId, type){
+  const input = document.getElementById('client-msg-input');
+  if(!input || !input.value.trim()){ toast('Please type a message.','error'); return; }
+  const text = input.value.trim();
+  const conv = getOrCreateClientConv(clientId, type);
+  const time = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  conv.messages = conv.messages || [];
+  conv.messages.push({from:'client', text, time, date:'Today'});
+  conv.preview = text;
+  conv.date = 'Today';
+  // Also mark unread for owner
+  conv.unread = (conv.unread||0) + 1;
+  lsSave('conversations', APP.data.conversations);
+  APP.cpMsgThread = type;
+  renderCurrentPage();
+  setTimeout(()=>{const el=document.getElementById('client-chat-area'); if(el) el.scrollTop=el.scrollHeight;},50);
+  toast('Message sent!','success');
+}
+
+function renderClientMarketingReports(c, isMarketing){
+  if(!isMarketing){
+    return `<div class="card card-pad" style="max-width:480px;text-align:center;padding:40px 24px">
+      <div style="font-size:32px;margin-bottom:12px">📊</div>
+      <div style="font-size:15px;font-weight:600;color:var(--navy);margin-bottom:8px">No Marketing Reports Available</div>
+      <div style="font-size:13px;color:var(--text3)">Marketing reports are not available for your current package and partner assignment. Contact your TJC team to learn more.</div>
+    </div>`;
+  }
+  const m = c.marketingMetrics || {};
+  const fields = [
+    {key:'reach',label:'Reach',icon:'👁'},
+    {key:'engagementRate',label:'Engagement Rate',icon:'❤️',suffix:'%'},
+    {key:'leadsGenerated',label:'Leads Generated',icon:'🎯'},
+    {key:'linkClicks',label:'Link Clicks',icon:'🔗'},
+    {key:'postsPublished',label:'Posts Published',icon:'📝'},
+    {key:'followerGrowth',label:'Follower Growth',icon:'📈'},
+    {key:'topPlatform',label:'Top Platform',icon:'🏆'},
+    {key:'period',label:'Period',icon:'📅'},
+  ];
+  const hasData = Object.keys(m).length > 0;
+  return `
+  <div style="max-width:640px">
+    ${m.period?`<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">Report Period: ${m.period}</div>`:''}
+    ${!hasData?`<div class="card card-pad" style="margin-bottom:14px;background:var(--navy-pale);border-color:var(--navy-mid)"><div style="font-size:13px;color:var(--navy)">Your TJC Partner will publish your marketing metrics here. Check back soon!</div></div>`:''}
+    <div class="mkt-stat-grid">
+      ${fields.filter(f=>!['topPlatform','period'].includes(f.key)).map(f=>`
+      <div class="mkt-stat-card">
+        <div style="font-size:20px;margin-bottom:6px">${f.icon}</div>
+        <div class="mkt-stat-val">${m[f.key]!==undefined&&m[f.key]!==''?m[f.key]+(f.suffix||''):'—'}</div>
+        <div class="mkt-stat-lbl">${f.label}</div>
+      </div>`).join('')}
+    </div>
+    ${m.topPlatform?`<div class="card card-pad" style="display:flex;align-items:center;gap:10px"><div style="font-size:24px">🏆</div><div><div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.04em">Top Platform</div><div style="font-size:16px;font-weight:700;color:var(--navy)">${m.topPlatform}</div></div></div>`:''}
+  </div>`;
+}
 
 function openClientTaskRequest(clientId){
   const c = APP.data.clients.find(x=>x.id===clientId);
@@ -4152,8 +4515,13 @@ function renderClientFacingPortal(){
     </div>
   </div>`;
 
-  const tabs = [['overview','📊 Overview'],['tasks','✅ My Tasks'],['invoices','🧾 Invoices'],['content','📱 Deliverables'],['contact','📞 Contact Us']];
-  const tabBar = `<div class="cp-portal-tabs">${tabs.map(([t,l])=>`<div class="ptab${APP.cpTab===t?' on':''}" onclick="setClientTab('${t}')">${l}</div>`).join('')}</div>`;
+  // Determine if marketing reports tab should show
+  const vaForClient = APP.data.team.find(v=>v.id===c.assignedVaUid);
+  const MARKETING_SKILLS = ['Facebook Ads','Instagram','Social Media','Marketing','Canva','TikTok','Content','Copywriting','SEO','LinkedIn'];
+  const isMarketingPartner = (vaForClient?.skills||[]).some(s=>MARKETING_SKILLS.includes(s));
+  const tabList = [['overview','📊 Overview'],['tasks','✅ My Tasks'],['invoices','🧾 Invoices'],['content','📱 Deliverables'],['messages','💬 Messages'],['contact','📞 Contact Us']];
+  if(isMarketingPartner) tabList.splice(5,0,['reports','📊 Reports']);
+  const tabBar = `<div class="cp-portal-tabs">${tabList.map(([t,l])=>`<div class="ptab${APP.cpTab===t?' on':''}" onclick="setClientTab('${t}')">${l}</div>`).join('')}</div>`;
 
   let body = '';
   if(APP.cpTab==='overview'){
@@ -4269,6 +4637,14 @@ function renderClientFacingPortal(){
     </div>`;
   }
 
+  if(APP.cpTab==='messages'){
+    body = renderClientMessages(c);
+  }
+
+  if(APP.cpTab==='reports'){
+    body = renderClientMarketingReports(c, isMarketingPartner);
+  }
+
   if(APP.cpTab==='contact'){
     body = `
     <div class="card card-pad" style="margin-bottom:14px;max-width:480px">
@@ -4277,12 +4653,12 @@ function renderClientFacingPortal(){
         <div class="av av-lg av-gold">JI</div>
         <div><div style="font-size:13px;font-weight:600">Justine Inacay</div><div style="font-size:11px;color:var(--text3)">Founder · The Jobs Collective</div><div style="font-size:11px;color:var(--teal);margin-top:2px">justine@thejobscollective.com</div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
         <div class="av av-lg ${avColor(c.assignedVaColor)}">${c.assignedVaInitials}</div>
         <div><div style="font-size:13px;font-weight:600">${c.assignedVa}</div><div style="font-size:11px;color:var(--text3)">Your Assigned Partner</div></div>
       </div>
     </div>
-    <div class="card card-pad" style="max-width:480px">
+    <div class="card card-pad" style="margin-bottom:14px;max-width:480px">
       <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--navy)">Need Help?</div>
       <div style="font-size:13px;color:var(--text2);line-height:1.8">
         📧 <strong>Email:</strong> hello@thejobscollective.com<br>
@@ -4290,6 +4666,10 @@ function renderClientFacingPortal(){
         🕐 <strong>Office hours:</strong> Mon–Fri, 8 AM – 6 PM PHT<br>
         📦 <strong>Your package:</strong> ${c.package}
       </div>
+    </div>
+    <div style="display:flex;gap:10px;max-width:480px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="setClientTab('messages');APP.cpMsgThread='client-partner'">💬 Message Your Partner</button>
+      <button class="btn btn-secondary" onclick="setClientTab('messages');APP.cpMsgThread='client-management'">💬 Message Management</button>
     </div>`;
   }
 
